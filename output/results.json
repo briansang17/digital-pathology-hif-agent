@@ -1,0 +1,391 @@
+{
+  "drug_name": "belzutifan",
+  "moa_description": "HIF-2alpha inhibitor hypoxia pathway VHL-mutant tumors",
+  "tumor_type": "pan-cancer",
+  "moa_class": "hypoxia",
+  "llm_backend_used": "Gemini/gemini-2.5-flash",
+  "hypotheses": [
+    {
+      "rank": 6,
+      "feature_name": "Stromal Vascular Density",
+      "feature_category": "cell_density",
+      "feature_type": "predictive",
+      "roi": "stroma",
+      "roi_annotation_guide": "Annotate all stromal regions within the tumor area, excluding tumor nests and necrotic areas.",
+      "measurement_method": "Identify and count all distinct vascular structures (endothelial-lined lumens) within the annotated stromal regions. Divide the total count by the total stromal area. Additionally, assess vessel tortuosity qualitatively (e.g., score 0-3) or quantitatively (e.g., fractal dimension).",
+      "measurement_unit": "vessels/mm\u00b2",
+      "confidence_score": 95.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Belzutifan inhibits HIF-2alpha, which drives VEGF expression. Reduced VEGF leads to decreased angiogenesis and vessel normalization, directly impacting stromal vascular density and morphology.",
+      "supporting_sources": [
+        "he_stromal_vessel_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_stromal_vessel_density",
+          "claim": "High stromal vascular density with tortuous vessel morphology indicates active tumor angiogenesis and predicts response to anti-VEGF therapy. Vessel normalization (reduced density, reduced tortuosity) is a hallmark of effective anti-angiogenic treatment."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "Belzutifan, by inhibiting HIF-2alpha and thus reducing VEGF, is expected to decrease stromal vascular density and normalize vessel morphology. High baseline stromal vascular density with tortuous vessels may predict response, while a reduction post-treatment could indicate therapeutic efficacy."
+    },
+    {
+      "rank": 5,
+      "feature_name": "Tumor Necrosis Fraction",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Annotate all areas of tumor necrosis, characterized by ghost cells, karyorrhexis, and absence of viable tumor cells, within the entire tumor area.",
+      "measurement_method": "Calculate the total area of tumor necrosis and divide it by the total viable tumor area (excluding stroma and normal tissue). Express as a percentage.",
+      "measurement_unit": "%",
+      "confidence_score": 93.75,
+      "predictive_score": 85.0,
+      "prognostic_score": 92.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Tumor necrosis is a direct consequence of intratumoral hypoxia. Belzutifan, as a HIF-2alpha inhibitor, targets the hypoxia pathway, and its efficacy should reduce hypoxia and subsequent necrosis.",
+      "supporting_sources": [
+        "he_necrosis_fraction"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_necrosis_fraction",
+          "claim": "High tumor necrosis fraction reflects intratumoral hypoxia and predicts poor prognosis; in anti-VEGF settings it serves as a baseline hypoxia indicator and is reduced by successful vascular normalization."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "High tumor necrosis fraction reflects severe intratumoral hypoxia, a condition exacerbated by HIF-2alpha activity. Belzutifan's inhibition of HIF-2alpha is hypothesized to reduce intratumoral hypoxia, leading to a decrease in tumor necrosis fraction, which may serve as an early indicator of response."
+    },
+    {
+      "rank": 7,
+      "feature_name": "TIL Exclusion Pattern Score",
+      "feature_category": "immune_phenotype",
+      "feature_type": "predictive",
+      "roi": "invasive_margin",
+      "roi_annotation_guide": "Annotate the invasive margin, defined as the interface between the tumor and the surrounding host stroma, and the adjacent peritumoral stroma.",
+      "measurement_method": "Qualitatively score the pattern of TIL infiltration at the invasive margin and peritumoral stroma (e.g., 0-3 scale). An 'excluded' pattern is characterized by TILs confined to the peritumoral stroma, separated from tumor nests by a dense stromal barrier, often associated with high VEGF.",
+      "measurement_unit": "score",
+      "confidence_score": 93.75,
+      "predictive_score": 100.0,
+      "prognostic_score": 70.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "VEGF, a downstream target of HIF-2alpha, contributes to stromal barriers that exclude TILs. Belzutifan's anti-VEGF effect should disrupt these barriers, promoting TIL infiltration.",
+      "supporting_sources": [
+        "he_tils_excluded_pattern"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_tils_excluded_pattern",
+          "claim": "The immune-excluded phenotype \u2014 where TILs are trapped at the tumor margin by VEGF-driven stromal barriers \u2014 predicts poor response to checkpoint monotherapy. Anti-VEGF disrupts this exclusion mechanism, promoting TIL infiltration."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "The immune-excluded phenotype, driven in part by VEGF-mediated stromal barriers, predicts poor immune response. Belzutifan, by inhibiting HIF-2alpha and reducing VEGF, is expected to disrupt these stromal barriers, converting an excluded phenotype to an inflamed one, thereby improving TIL infiltration and potentially predicting response."
+    },
+    {
+      "rank": 3,
+      "feature_name": "Stromal Ratio",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Annotate all tumor-associated stromal areas and all tumor cell areas within the entire tumor section.",
+      "measurement_method": "Calculate the total area of tumor-associated stroma and divide it by the total tumor area (stroma + tumor cells). Express as a percentage.",
+      "measurement_unit": "%",
+      "confidence_score": 93.75,
+      "predictive_score": 80.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "VEGF, a downstream target of HIF-2alpha, is known to drive desmoplastic stroma. Belzutifan's inhibition of HIF-2alpha should reduce stromal content.",
+      "supporting_sources": [
+        "he_stromal_ratio",
+        "he_tumor_stroma_ratio"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_stromal_ratio",
+          "claim": "High tumor-associated stroma ratio (>50%) is an independent poor prognostic factor across multiple solid tumors and associated with EMT and reduced immune infiltration."
+        },
+        {
+          "source": "HECATALOG",
+          "id": "he_tumor_stroma_ratio",
+          "claim": "High tumor-stroma ratio (stroma-rich) is a pan-cancer independent negative prognostic factor. In anti-angiogenic settings, VEGF drives desmoplastic stroma; stroma-high tumors are associated with immun"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "High stromal ratio, often driven by VEGF-induced desmoplasia in anti-angiogenic settings, is associated with poor prognosis. Belzutifan, by inhibiting HIF-2alpha and reducing VEGF, is hypothesized to decrease the stromal ratio, which could correlate with improved outcomes and serve as a predictive biomarker."
+    },
+    {
+      "rank": 5,
+      "feature_name": "Perivascular TIL Density",
+      "feature_category": "cell_density",
+      "feature_type": "predictive",
+      "roi": "vascular",
+      "roi_annotation_guide": "Annotate regions immediately surrounding tumor-associated blood vessels within the tumor microenvironment.",
+      "measurement_method": "Identify and count lymphocytes (TILs) within a defined perivascular cuff (e.g., 50-micron radius) around tumor-associated vessels. Divide the total count by the total perivascular area.",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 93.75,
+      "predictive_score": 85.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "C",
+      "evidence_basis": "direct",
+      "drug_relevance": "Belzutifan's anti-angiogenic effect (via HIF-2alpha inhibition) normalizes tumor vessels, which is known to enhance T cell extravasation and accumulation in perivascular regions.",
+      "supporting_sources": [
+        "he_perivascular_til_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_perivascular_til_density",
+          "claim": "Perivascular TIL density reflects T cell trafficking to the tumor via normalized vessels. Anti-VEGF therapy normalizes vessel morphology and enhances T cell extravasation; high perivascular TILs post-treatment predict improved outcomes."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "Belzutifan's anti-angiogenic effect is expected to normalize tumor vasculature, facilitating T cell extravasation. Increased perivascular TIL density, reflecting enhanced T cell trafficking to the tumor via normalized vessels, is hypothesized to predict response to belzutifan."
+    },
+    {
+      "rank": 4,
+      "feature_name": "Tumor-Associated Macrophage Density",
+      "feature_category": "cell_density",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Annotate all tumor-associated macrophages (large cells with abundant cytoplasm, often kidney-shaped nuclei) within both tumor nests and associated stroma.",
+      "measurement_method": "Count all tumor-associated macrophages within the total tumor area (tumor nests + stroma). Divide the total count by the total tumor area.",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 93.75,
+      "predictive_score": 100.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "analogical",
+      "drug_relevance": "[By analogy from hypoxia] Hypoxia is a key driver of M2 macrophage polarization and accumulation. Belzutifan's inhibition of HIF-2alpha could reduce TAM density or shift their phenotype towards M1, impacting the immunosuppressive TME.",
+      "supporting_sources": [
+        "he_macrophage_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_macrophage_density",
+          "claim": "High TAM density is associated with poor prognosis in most solid tumors due to M2 polarization promoting immunosuppression; intratumoral TAM-to-lymphocyte ratio predicts checkpoint inhibitor resistanc"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "[By analogy from hypoxia] High tumor-associated macrophage (TAM) density, particularly M2-polarized macrophages, is often promoted by hypoxic conditions. Belzutifan, by inhibiting HIF-2alpha and alleviating hypoxia, is hypothesized to reduce TAM density or alter their phenotype, thereby reducing immunosuppression and potentially predicting response."
+    },
+    {
+      "rank": 7,
+      "feature_name": "Stromal TIL Score",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "stroma",
+      "roi_annotation_guide": "Annotate all stromal regions within the tumor area, excluding tumor nests and necrotic areas.",
+      "measurement_method": "Count all lymphocytes (TILs) within the annotated stromal regions. Divide the total count by the total stromal area.",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 93.75,
+      "predictive_score": 100.0,
+      "prognostic_score": 78.0,
+      "evidence_level": "A",
+      "evidence_basis": "analogical",
+      "drug_relevance": "[By analogy from anti-angiogenic therapies] Belzutifan's anti-angiogenic effects (reduced VEGF, vessel normalization, disruption of stromal barriers) are expected to improve T cell infiltration into the tumor stroma.",
+      "supporting_sources": [
+        "he_stromal_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_stromal_til",
+          "claim": "High stromal TIL score is an independent prognostic marker associated with improved OS in TNBC and NSCLC, and predicts response to checkpoint inhibitors and anthracycline-based chemotherapy."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "[By analogy from anti-angiogenic therapies] Belzutifan's inhibition of HIF-2alpha is expected to normalize tumor vasculature and reduce stromal barriers, thereby facilitating T cell infiltration into the tumor stroma. A higher stromal TIL score, reflecting an enhanced immune presence, is hypothesized to correlate with better response to belzutifan."
+    },
+    {
+      "rank": 8,
+      "feature_name": "Intratumoral TIL Density",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "intraepithelial",
+      "roi_annotation_guide": "Annotate all tumor cell nests, excluding associated stroma and necrotic areas.",
+      "measurement_method": "Count all lymphocytes (TILs) within the annotated tumor cell nests. Divide the total count by the total tumor nest area.",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 93.75,
+      "predictive_score": 100.0,
+      "prognostic_score": 75.0,
+      "evidence_level": "B",
+      "evidence_basis": "analogical",
+      "drug_relevance": "[By analogy from anti-angiogenic therapies] Improved vessel function and reduced stromal exclusion due to HIF-2alpha inhibition should lead to increased T cell infiltration into tumor nests.",
+      "supporting_sources": [
+        "he_intratumoral_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECATALOG",
+          "id": "he_intratumoral_til",
+          "claim": "Intratumoral TIL density correlates with pathologic complete response to neoadjuvant therapy in TNBC and predicts benefit from checkpoint inhibition in multiple tumor types."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "[By analogy from anti-angiogenic therapies] Belzutifan's mechanism of action, involving vessel normalization and reduction of stromal barriers, is expected to enhance the ability of T cells to infiltrate tumor nests. A higher intratumoral TIL density is hypothesized to be associated with a more effective anti-tumor immune response and better clinical outcomes with belzutifan."
+    },
+    {
+      "rank": 1,
+      "feature_name": "Tumor-Stroma Ratio (TSR)",
+      "feature_category": "composite",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Assess the hotspot area with the highest stromal proportion relative to tumor cells; select a representative 1\u20132 mm\u00b2 field in the invasive front or core with highest stroma-to-tumor ratio.",
+      "measurement_method": "In QuPath or manually on H&E, estimate the proportion of stroma (fibrous connective tissue + non-immune cells) vs viable tumor cells in a representative field. TSR = stroma area / (stroma + tumor area). Classify as stroma-low (<50%) vs stroma-high (\u226550%).",
+      "measurement_unit": "ratio (0\u20131) or categorical",
+      "confidence_score": 100.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_tumor_stroma_ratio"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tumor_stroma_ratio",
+          "claim": "High tumor-stroma ratio (stroma-rich) is a pan-cancer independent negative prognostic factor. In anti-angiogenic settings, VEGF drives desmoplastic stroma; stroma-high tumors are associated with immune exclusion and poor response to combination IO/an"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "hypoxia",
+        "raw_score": 104.0
+      },
+      "hypothesis": "Evidence-based H&E feature (composite) relevant for General H&E prognostic/predictive feature."
+    },
+    {
+      "rank": 2,
+      "feature_name": "Tumor Cell Density",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Count of tumor cells per unit area (cells/mm\u00b2) within the annotated tumor region",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 93.75,
+      "predictive_score": 0.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_tumor_cell_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tumor_cell_density",
+          "claim": "High tumor cell density is associated with aggressive tumor biology and poor prognosis; useful as a denominator for immune infiltrate ratios and to normalize TIL density measurements."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 98.25
+      },
+      "hypothesis": "Evidence-based H&E feature (cell_density) relevant for General H&E prognostic/predictive feature."
+    }
+  ],
+  "failed_sources": [],
+  "successful_sources": [
+    "HECatalog",
+    "RankingEngine",
+    "LLM:Gemini/gemini-2.5-flash"
+  ],
+  "total_features_evaluated": 31,
+  "run_metadata": {
+    "elapsed_seconds": 38.8,
+    "total_evidence": 31,
+    "catalog_features": 31,
+    "pubmed_features": 0,
+    "pubmed_ids_found": 0,
+    "moa_class": "hypoxia",
+    "analogical_search": true
+  }
+}
