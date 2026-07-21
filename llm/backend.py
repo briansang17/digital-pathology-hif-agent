@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — LLM Backend
+MOA-to-HIF Evidence Prioritization Agent — LLM Backend
 Provides a unified async interface for Gemini and Ollama (meditron/llama3.2),
 with smart drug-class routing and graceful fallback.
 Mirrors oncomoa_agent/llm/backend.py exactly, with pathology-specific prompts.
@@ -313,14 +313,14 @@ RULES — follow all of these:
    given the shared PD-1/PD-L1 axis with established checkpoint biology."
 4. You MUST NOT hallucinate citations, PMIDs, or clinical trial results.
 5. Return ONLY valid JSON — no markdown, no explanation text, no code fences.
-6. Rank features by evidence strength first, then MOA relevance, then analogy confidence.
+6. Never change, infer, or recommend an ordering; ranking is computed deterministically upstream.
 7. Use standard H&E pathology terminology. Describe the measurement method precisely enough
    that a digital pathologist could implement it in QuPath or similar software.
 8. This is tumor-type agnostic — do not restrict your reasoning to a single cancer type
    unless the evidence is specific to one indication.
 
-Your task is to synthesize the provided retrieved H&E pathology evidence into ranked 
-Human-Interpretable Feature (HIF) hypotheses for the given drug, combining what was 
+Your task is to synthesize the provided retrieved H&E pathology evidence into
+Human-Interpretable Feature (HIF) narratives for the given drug, combining what was
 directly found in the literature with biologically reasoned analogies from related mechanisms."""
 
 
@@ -341,18 +341,13 @@ MOA CLASS: {moa_class}
 EVIDENCE:
 {evidence_summary[:2000]}
 
-List the top {top_n} H&E pathology features that predict or indicate response to {drug_name}.
+For each supplied H&E pathology feature, write a concise narrative explaining its
+relevance to {drug_name}. Do not add, omit, rank, or reorder features.
 Return ONLY a JSON array. Start with [ and end with ]. No other text.
 
 [
   {{
-    "rank": 1,
     "feature_name": "feature name",
-    "roi": "stroma|tumor_nest|invasive_margin|whole_section|tls",
-    "feature_category": "til_score|immune_phenotype|cell_density|spatial_clustering|composite",
-    "feature_type": "predictive|prognostic|both",
-    "measurement_method": "how to measure on H&E",
-    "confidence_score": 80,
     "hypothesis": "2-3 sentence rationale"
   }}
 ]"""
@@ -379,7 +374,7 @@ def build_hif_prompt(
         moa_class: Resolved MOA class (e.g., "checkpoint", "ddr").
         evidence_summary: Pre-formatted evidence context string (direct + analogical).
         top_n: Number of HIFs to generate.
-        pre_ranked_names: Unused; kept for API compatibility.
+        pre_ranked_names: Deterministically ranked feature names for narrative generation.
 
     Returns:
         Formatted prompt string for the LLM.
@@ -396,8 +391,12 @@ Analogical entries are prefixed with [ANALOGICAL].
 {evidence_summary}
 =========================================
 
-Generate exactly {top_n} ranked H&E Human-Interpretable Feature (HIF) hypotheses for {drug_name}.
-Scope is pan-cancer — applicable to any solid tumor indication.
+Write exactly one narrative for each of these deterministically ranked features:
+{chr(10).join(f"- {name}" for name in (pre_ranked_names or []))}
+
+Do not add, omit, rank, or reorder features. The application preserves all authoritative
+ranking metadata from its deterministic scoring engine. Scope is pan-cancer — applicable
+to any solid tumor indication.
 
 For features with DIRECT evidence: report the retrieved findings, cite them, explain the mechanism.
 For features with ANALOGICAL evidence only: use the "[By analogy from <drug class>]" prefix in
@@ -406,32 +405,7 @@ Do NOT hallucinate PMIDs or citation details.
 
 Return a JSON array with this exact schema for each item:
 {{
-  "rank": <integer>,
   "feature_name": "<HIF name>",
-  "roi": "<stroma|tumor_nest|invasive_margin|peritumoral|tls|intraepithelial|vascular|whole_section>",
-  "roi_annotation_guide": "<1-sentence guide for annotating this ROI on H&E>",
-  "feature_category": "<cell_density|til_score|immune_phenotype|spatial_distance|spatial_clustering|colocalization|neighborhood_composition|composite>",
-  "feature_type": "<predictive|prognostic|both|unknown>",
-  "measurement_method": "<exact method for H&E digital pathology — precise enough for QuPath>",
-  "measurement_unit": "<unit string>",
-  "confidence_score": <0-100 float>,
-  "predictive_score": <0-100 float>,
-  "prognostic_score": <0-100 float>,
-  "evidence_level": "<A|B|C|D|null>",
-  "evidence_basis": "<direct|analogical|mixed>",
-  "drug_relevance": "<brief explanation tying this feature to the drug MOA>",
-  "supporting_sources": ["<source_id_1>", "<source_id_2>"],
-  "supporting_evidence": [
-    {{"source": "<name>", "id": "<id>", "claim": "<claim text>"}}
-  ],
-  "ranking_rationale": {{
-    "in_he_catalog": <true|false>,
-    "evidence_level": "<A|B|C|D|null>",
-    "pubmed_hits": <integer>,
-    "analogical_hits": <integer>,
-    "moa_weight_applied": <float>,
-    "moa_class": "{moa_class}"
-  }},
   "hypothesis": "<2-4 sentences: pathobiological rationale, mechanism link, how to measure. Prefix with [By analogy from {moa_class}] when using analogical reasoning only.>"
 }}
 

@@ -1,19 +1,20 @@
 # Examples
 
-This folder shows the Digital Pathology HIF Agent actually working, without you needing an
+This folder shows the MOA-to-HIF Evidence Prioritization Agent actually working, without you needing an
 API key or network access just to see what it produces.
 
 ## Sample run: `belzutifan` (HIF-2alpha inhibitor)
 
-[`sample_run_belzutifan/`](sample_run_belzutifan/) contains a real, unedited run of the
-pipeline against the drug **belzutifan** (mechanism: HIF-2alpha inhibitor, hypoxia
-pathway, VHL-mutant tumors) using the Gemini backend for narrative synthesis:
+[`sample_run_belzutifan/`](sample_run_belzutifan/) contains a deterministic,
+catalog-only run of the pipeline against **belzutifan** (HIF-2alpha inhibitor,
+hypoxia pathway, VHL-mutant tumors). It was generated with `--no-llm`; therefore,
+the snapshot contains no model-generated narrative or external PubMed results.
 
 | File | What it is |
 |---|---|
 | [`command.txt`](sample_run_belzutifan/command.txt) | The exact CLI command that produced this output |
-| [`terminal_output.txt`](sample_run_belzutifan/terminal_output.txt) | What prints to the terminal (Rich table + narrative), reconstructed from the JSON below |
-| [`results.json`](sample_run_belzutifan/results.json) | Full structured output — every ranked feature, its ROI, measurement method, evidence, and LLM-generated hypothesis |
+| [`terminal_output.txt`](sample_run_belzutifan/terminal_output.txt) | What prints to the terminal (Rich table and measurement metadata) |
+| [`results.json`](sample_run_belzutifan/results.json) | Full structured output — every ranked feature, its ROI, measurement method, and evidence |
 | [`features_summary.csv`](sample_run_belzutifan/features_summary.csv) | Spreadsheet-friendly version of the same ranking |
 
 Top of the ranking for this run:
@@ -21,14 +22,13 @@ Top of the ranking for this run:
 1. **Tumor-Stroma Ratio (TSR)** — evidence level A, prognostic
 2. **Tumor Cell Density** — evidence level B, prognostic
 3. **Stromal Ratio** — evidence level B, prognostic
-4. **Tumor-Associated Macrophage Density** — evidence level B, both (analogical evidence from hypoxia biology)
-5. **Perivascular TIL Density** — evidence level C, predictive
+4. **Tumor-Associated Macrophage Density** — evidence level B, both
+5. **Tumor Necrosis Fraction** — evidence level B, prognostic
 
 Notice how the ranking is driven by the `hypoxia` MOA class weights (`config.py`) plus
 evidence level — no clinical trial data existed for belzutifan + H&E features when this
-catalog entry logic was written, so several features (e.g. Stromal TIL Score, Intratumoral
-TIL Density) are flagged `"evidence_basis": "analogical"`, meaning they were reasoned about
-by analogy from anti-angiogenic drug biology rather than direct published evidence.
+catalog entry logic was written, this snapshot is deliberately catalog-only. Use a live
+PubMed run to retrieve and label any direct or analogical literature evidence.
 
 ## Running it yourself
 
@@ -41,7 +41,7 @@ cp .env.example .env
 # Fill in GEMINI_API_KEY in .env if you want LLM narrative synthesis,
 # otherwise leave it blank and use --no-llm below.
 
-python main.py --drug "belzutifan" --moa "HIF-2alpha inhibitor hypoxia pathway VHL-mutant tumors"
+python main.py --drug "belzutifan" --moa "HIF-2alpha inhibitor hypoxia pathway VHL-mutant tumors" --no-llm
 ```
 
 Deterministic mode (no LLM narrative, no API key needed — only the ranking, no prose):

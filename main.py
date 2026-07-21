@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — Main CLI Entrypoint
+MOA-to-HIF Evidence Prioritization Agent — Main CLI Entrypoint
 
 Recommends ranked H&E Human-Interpretable Features (HIFs) that are prognostic
 or predictive for a given drug MOA. Tumor-type agnostic — works for any solid
@@ -80,7 +80,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="digpath",
         description=(
-            "Digital Pathology HIF Agent — "
+            "MOA-to-HIF Evidence Prioritization Agent — "
             "H&E Human-Interpretable Feature recommendation for drug MOA. "
             "Tumor-type agnostic: works for any solid tumor indication."
         ),
@@ -124,7 +124,7 @@ def display_results_table(output: PathologyOutput) -> None:
     """Render HIF hypotheses as a Rich table in the terminal."""
     console.print()
     console.print(Panel(
-        f"[bold green]Digital Pathology HIF Agent Results[/bold green]\n"
+        f"[bold green]MOA-to-HIF Evidence Prioritization Agent Results[/bold green]\n"
         f"Drug: [cyan]{output.drug_name}[/cyan] | "
         f"Scope: [yellow]Pan-cancer[/yellow] | "
         f"MOA class: [magenta]{output.moa_class}[/magenta] | "
@@ -266,7 +266,7 @@ async def main() -> None:
     moa_class = get_moa_class(args.drug, args.moa)
 
     console.print(Panel(
-        "[bold cyan]Digital Pathology HIF Agent[/bold cyan]\n"
+        "[bold cyan]MOA-to-HIF Evidence Prioritization Agent[/bold cyan]\n"
         "[dim]H&E Human-Interpretable Feature Recommendation · Pan-Cancer[/dim]",
         expand=False,
     ))

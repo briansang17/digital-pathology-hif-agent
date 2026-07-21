@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — Pydantic v2 Schemas
+MOA-to-HIF Evidence Prioritization Agent — Pydantic v2 Schemas
 All data models for H&E feature evidence, HIF hypotheses, and pipeline outputs.
 Mirrors the structure of oncomoa_agent/models/schemas.py.
 """

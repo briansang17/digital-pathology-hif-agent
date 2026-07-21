@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — H&E Feature Agent
+MOA-to-HIF Evidence Prioritization Agent — H&E Feature Agent
 Queries the H&E catalog to retrieve all Human-Interpretable Features (HIFs)
 relevant for a given drug MOA. Tumor-type agnostic — every indication is supported.
 

@@ -1,39 +1,26 @@
-Reconstructed from results.json — this is what the Rich console table looks like
-when you run the command in command.txt (LLM_BACKEND=gemini, model gemini-2.5-flash).
+Output from the deterministic `--no-llm` command in command.txt.
 
-╭──────────────────────────── Digital Pathology HIF Agent ────────────────────────────╮
-│ Drug: belzutifan                                                                     │
-│ MOA:  HIF-2alpha inhibitor hypoxia pathway VHL-mutant tumors                         │
-│ MOA class: hypoxia   |   LLM backend: Gemini/gemini-2.5-flash                        │
-╰────────────────────────────────────────────────────────────────────────────────────────╯
+Drug: belzutifan
+MOA: HIF-2alpha inhibitor hypoxia pathway VHL-mutant tumors
+Scope: pan-cancer
+MOA class: hypoxia
+LLM backend: none
 
- #  Feature                                ROI              Category         Type        Confidence  Evidence
- 1  Stromal Vascular Density                stroma           cell_density     predictive  95.0        B
- 2  Tumor Necrosis Fraction                 whole_section    cell_density     prognostic  93.8        B
- 3  TIL Exclusion Pattern Score             invasive_margin  immune_phenotype predictive  93.8        B
- 4  Stromal Ratio                           whole_section    cell_density     prognostic  93.8        B
- 5  Perivascular TIL Density                vascular         cell_density     predictive  93.8        C
- 6  Tumor-Associated Macrophage Density     whole_section    cell_density     both        93.8        B
- 7  Stromal TIL Score                       stroma           til_score        both        93.8        A
- 8  Intratumoral TIL Density                intraepithelial  til_score        both        93.8        B
- 9  Tumor-Stroma Ratio (TSR)                whole_section    composite        prognostic  100.0       A
-10  Tumor Cell Density                      whole_section    cell_density     prognostic  93.8        B
+ #  Feature                                ROI              Category          Type         Confidence  Evidence
+ 1  Tumor-Stroma Ratio (TSR)                whole_section    composite         prognostic   100.0       A
+ 2  Tumor Cell Density                      whole_section    cell_density      prognostic    93.8       B
+ 3  Stromal Ratio                           whole_section    cell_density      prognostic    93.8       B
+ 4  Tumor-Associated Macrophage Density     whole_section    cell_density      both          93.8       B
+ 5  Tumor Necrosis Fraction                 whole_section    cell_density      prognostic    93.8       B
+ 6  Stromal Vascular Density                stroma           cell_density      both          93.8       B
+ 7  TIL Exclusion Pattern Score             invasive_margin  spatial_distance  predictive    93.8       B
+ 8  Mitotic Index                           tumor_nest       cell_density      predictive    93.8       B
+ 9  Nuclear Pleomorphism Score              tumor_nest       cell_density      predictive    93.8       B
+10  Immune Score (TIL/TAM Composite)        whole_section    composite         both          83.3       B
 
-#1 Stromal Vascular Density (predictive) [direct evidence]
-   ROI: stroma
-   Belzutifan inhibits HIF-2alpha, which drives VEGF expression. Reduced VEGF leads to
-   decreased angiogenesis and vessel normalization, directly impacting stromal vascular
-   density and morphology.
-   Hypothesis: Belzutifan, by inhibiting HIF-2alpha and thus reducing VEGF, is expected
-   to decrease stromal vascular density and normalize vessel morphology. High baseline
-   stromal vascular density with tortuous vessels may predict response, while a
-   reduction post-treatment could indicate therapeutic efficacy.
-
-... (see results.json for the full narrative + ranking rationale for all 10 features)
-
-Run summary: 31 catalog features evaluated, 0 PubMed hits (no cached articles for this
-drug at run time), elapsed 38.8s. Sources: HECatalog, RankingEngine, LLM:Gemini/gemini-2.5-flash.
+Run summary: 31 catalog features evaluated, 0 PubMed records returned, no LLM synthesis.
+Sources: HECatalog, RankingEngine.
 
 Outputs written to:
-  - output/results.json           (full structured output, all evidence + narratives)
-  - output/features_summary.csv   (spreadsheet-friendly version)
+  - examples/sample_run_belzutifan/results.json
+  - examples/sample_run_belzutifan/features_summary.csv

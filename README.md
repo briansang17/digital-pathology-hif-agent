@@ -1,8 +1,10 @@
-# Digital Pathology HIF Agent
+# MOA-to-HIF Evidence Prioritization Agent
 
 Given a drug name and its mechanism of action (MOA), this tool returns a ranked, evidence-graded list of H&E-derived Human-Interpretable Features (HIFs) likely to be predictive or prognostic for that drug — with ROI annotation guidance, measurement methodology, and evidence provenance for each.
 
 It's built for the situation where you don't yet have trial pathology data: a new or repositioned compound where MOA is the only signal available, and you need a defensible starting hypothesis set for which H&E-derived features to prioritize in a translational/companion-diagnostic workup.
+
+> **Scope:** This is an evidence-synthesis and hypothesis-prioritization tool. It does not ingest whole-slide images, train computer-vision models, extract HIFs from slides, or provide diagnostic or treatment recommendations.
 
 ---
 
@@ -35,7 +37,7 @@ The architecture here enforces a hard separation: **retrieval and ranking are de
 Retrieval draws from two sources:
 
 1. **`tools/he_catalog.py`** — a static, hand-curated catalog of ~30 H&E HIFs, each with `evidence_level` (A–D), `moa_classes`, `tumor_types`, ROI annotation guide, measurement method, and supporting PMIDs. Precision-controlled and works fully offline.
-2. **`tools/pubmed.py`** — live E-utilities queries per (drug, feature, tumor type) triplet, parsed into evidence records with feature type (predictive/prognostic) inferred from abstract text, to surface drug-specific evidence not yet in the catalog.
+2. **`tools/pubmed.py`** — live pan-cancer E-utilities queries per (drug, feature) pair, parsed into evidence records with feature type (predictive/prognostic) inferred from abstract text, to surface drug-specific evidence not yet in the catalog.
 
 ## Pipeline
 
@@ -55,10 +57,10 @@ drug + MOA description
       │                score per feature, apply macrophage-reliability penalty, normalize
       │                to 0–100, sort. Fully deterministic — no LLM.
       │
-      └─ SynthesisAgent: send ranked features + their evidence context to Gemini/Ollama
+      └─ SynthesisAgent: send ranked feature names + their evidence context to Gemini/Ollama
                           with a closed-context prompt ("use ONLY the evidence given").
-                          Pydantic-validated; retries once on malformed JSON; falls back
-                          to deterministic ranking with no narrative on failure.
+                          It may fill narrative text only; it cannot alter rank, scores,
+                          evidence, or metadata. Falls back to deterministic ranking on failure.
 ```
 
 Four agents (`agents/`), one orchestrator (`agents/orchestrator.py`) that runs them in sequence with per-step error isolation — a failure in the literature search or LLM step degrades gracefully rather than aborting the run.
@@ -66,13 +68,12 @@ Four agents (`agents/`), one orchestrator (`agents/orchestrator.py`) that runs t
 ## Scoring
 
 ```
-total_score = (evidence_level_weight × moa_weight)
-            + (pubmed_hits × 0.15 × moa_weight)
-            + analogical_evidence_contribution
-            × macrophage_reliability_penalty (0.25× if macrophage-primary)
+total_score = catalog_score + pubmed_score + moa_alignment_score
+catalog_score = evidence_level_weight × moa_weight × macrophage_penalty
+pubmed_score = pubmed_hits × 0.15 × moa_weight
 ```
 
-- `evidence_level_weight`: A=5, B=3, C=2, D=1.5 (`config.EVIDENCE_LEVEL_WEIGHTS`)
+- `evidence_level_weight`: A=5, B=4, C=3, D=1.5 (`config.EVIDENCE_LEVEL_WEIGHTS`)
 - `moa_weight`: per-category multiplier from `config.MOA_FEATURE_WEIGHTS`, keyed by MOA class (e.g. `checkpoint` weights TIL/TLS/immune-phenotype categories 4–5×; `hypoxia` weights vascular/necrosis categories similarly)
 - Macrophage penalty exists because TAMs are unreliable to call from H&E morphology alone (large pale nuclei overlap with plasma cells/dendritic cells on H&E; CD68/CD163 IHC is needed for confident identification) — the 0.25× penalty keeps TAM-based features from outranking more H&E-reliable lymphocyte/stromal features regardless of raw evidence strength.
 - Analogical evidence: when no direct literature exists for a MOA (e.g. a first-in-class bispecific), the literature agent searches proxy drugs from a related, better-characterized MOA class (`agents/literature_agent.py: COMPONENT_PROXY_DRUGS`) and evidence is tagged `"evidence_basis": "analogical"` in the output so it's never conflated with direct evidence.
@@ -82,6 +83,8 @@ total_score = (evidence_level_weight × moa_weight)
 ```bash
 cd digital_pathology
 pip install -r requirements.txt
+# For the validated direct-dependency versions used in CI:
+# pip install -r requirements-lock.txt
 
 cp .env.example .env
 # GEMINI_API_KEY for narrative synthesis, or omit and use --no-llm for ranking-only
@@ -126,6 +129,18 @@ python main.py --drug "sotorasib" --moa "Covalent KRAS G12C inhibitor" --top-n 5
 # Override auto MOA-based backend routing
 python main.py --drug "bevacizumab" --moa "Anti-VEGF antibody" --backend gemini
 ```
+
+## Validation and intended use
+
+This repository demonstrates a reproducible, auditable workflow; it is **not clinically
+validated**. Rankings are hypothesis-generating and must be reviewed by qualified
+pathologists and translational scientists before use in experimental design. In particular,
+PubMed feature type is inferred from abstract text, analogical evidence is explicitly labeled,
+and the curated catalog requires periodic expert review.
+
+The tool is for research decision support only—not diagnosis, treatment selection, or any
+regulated clinical use. Do not submit patient data, protected health information, or
+confidential study information to third-party LLM backends. `--no-llm` avoids LLM calls.
 
 ## Repo layout
 

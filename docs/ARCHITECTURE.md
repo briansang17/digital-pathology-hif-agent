@@ -1,6 +1,6 @@
 # Architecture Deep Dive
 
-This document contains the full technical detail behind the Digital Pathology HIF Agent.
+This document contains the full technical detail behind the MOA-to-HIF Evidence Prioritization Agent.
 For a quick overview, see the main [README](../README.md).
 
 ---
@@ -17,7 +17,7 @@ In this system, the retrieval step has two sources:
 
 1. **The H&E Feature Catalog** (`tools/he_catalog.py`) — a structured, curated knowledge base of 25+ H&E HIFs, each with evidence levels, measurement methods, ROI annotation guides, and supporting PMIDs. This is hand-curated domain knowledge — it cannot hallucinate because it is a static structured database.
 
-2. **PubMed Literature Search** (`tools/pubmed.py`) — a live query to PubMed that searches for articles connecting the specific drug, the specific H&E feature, and the specific tumor type. This ensures the system is grounded in published literature for that exact drug context.
+2. **PubMed Literature Search** (`tools/pubmed.py`) — a live pan-cancer query to PubMed that searches for articles connecting the specific drug and H&E feature. This grounds the system in published literature while preserving an indication-agnostic scope.
 
 **Why not just ask the LLM directly?**
 An LLM like Gemini or Llama has general medical knowledge, but it does not know specifically which H&E features have Level A clinical evidence in NSCLC for PD-1 checkpoint inhibitors versus Level C evidence for KRAS inhibitors. It will blend and confuse. By retrieving structured evidence first and feeding it into the LLM as a controlled input, the LLM can only interpret what is there — it cannot invent citations or inflate evidence levels.
@@ -52,7 +52,7 @@ Step 2 — H&E Catalog Query (HEFeatureAgent)
 
 Step 3 — PubMed Literature Search (LiteratureAgent)
   For each top feature from the catalog, PubMed is queried:
-  e.g., "Stromal TIL Score" + "pembrolizumab" + "NSCLC"
+  e.g., "Stromal TIL Score" + "pembrolizumab"
   Results are parsed and turned into evidence records with inferred feature type
   (predictive vs prognostic) based on keywords in the abstract.
   These records add to each feature's evidence pool.
@@ -75,8 +75,8 @@ Step 4 — Deterministic Ranking (RankingAgent)
 Step 5 — LLM Narrative Synthesis (SynthesisAgent)
   The pre-ranked features + evidence context are sent to the LLM with a strict prompt:
   "Use ONLY the retrieved evidence. Write a 2-3 sentence biological rationale
-   for why this feature matters for this drug and how to measure it."
-  The LLM adds the narrative (the "why") but cannot change the ranking or invent sources.
+   for each supplied feature."
+  The LLM adds narrative text only; it cannot change ranks, scores, sources, or metadata.
   If the LLM fails, the system falls back to the deterministic ranking silently.
 
                         ↓
@@ -94,7 +94,7 @@ Output:
 ### 1. HEFeatureAgent (`agents/he_feature_agent.py`)
 
 **What it does:**
-Queries the structured H&E catalog and returns all features that are relevant for the given MOA class and tumor type. Assigns strength scores based on clinical evidence level and MOA alignment.
+Queries the structured H&E catalog and returns all features relevant for the given MOA class. Assigns strength scores based on clinical evidence level and MOA alignment.
 
 **Why it exists:**
 You need a deterministic, auditable first pass before the LLM gets involved. The catalog is the ground truth — it encodes what we already know from the literature. The agent's job is to filter and score that knowledge, not to invent new knowledge.
@@ -107,7 +107,7 @@ A checkpoint inhibitor and a CDK4/6 inhibitor both get stromal TIL scored — bu
 ### 2. LiteratureAgent (`agents/literature_agent.py`)
 
 **What it does:**
-Searches PubMed for each top H&E feature combined with the drug name and tumor type. Returns NormalizedPathologyFeature records from matched abstracts, with evidence type (predictive vs prognostic) inferred from the abstract text.
+Searches PubMed for each top H&E feature combined with the drug name. Returns NormalizedPathologyFeature records from matched abstracts, with evidence type (predictive vs prognostic) inferred from abstract text.
 
 **Why it exists:**
 The catalog is curated but cannot cover every drug-feature combination. For a new drug, there may be pre-clinical or early clinical data in PubMed that is not yet in the catalog. The literature agent provides fresh, drug-specific evidence that personalizes the ranking beyond generic pathway knowledge.
@@ -132,9 +132,9 @@ This is perhaps the most important architectural decision in the system. The LLM
 
 The scoring formula is:
 ```
-total_score = (evidence_level × moa_weight) + (pubmed_hits × 0.15 × moa_weight)
-            + tumor_type_boost (if applicable)
-            × macrophage_penalty (if applicable, × 0.25)
+total_score = catalog_score + pubmed_score + moa_alignment_score
+catalog_score = evidence_level × moa_weight × macrophage_penalty
+pubmed_score = pubmed_hits × 0.15 × moa_weight
 ```
 
 **Why macrophage features are penalized:**
@@ -187,7 +187,7 @@ Because the H&E feature evidence space is relatively stable and well-defined. Th
 
 ## The MOA Routing System — `config.py`
 
-When you input a drug + MOA, the system classifies it into one of six buckets:
+When you input a drug + MOA, the system classifies it into one of nine buckets:
 
 | MOA Class | Example drugs | What H&E features get boosted |
 |---|---|---|
@@ -196,6 +196,9 @@ When you input a drug + MOA, the system classifies it into one of six buckets:
 | `kinase` | osimertinib, sotorasib, abemaciclib | Tumor cell density, stromal ratio, general TME |
 | `antiangiogenic` | bevacizumab, ramucirumab | Stromal features, vascular context |
 | `cell_cycle` | palbociclib, ribociclib | Cell density, mitotic index, TIL |
+| `bispecific` | ivonescimab, PD-(L)1/VEGF agents | Combined immune and vascular context |
+| `adc` | trastuzumab deruxtecan, sacituzumab govitecan | Tumor-cell and immune context |
+| `hypoxia` | belzutifan | Vascular and stromal context |
 | `default` | Any novel or unclassified drug | Balanced weights across all categories |
 
 For **new drugs** where the MOA is experimental, the system falls back to `default` weights — which means it surfaces all well-evidenced H&E features equally. This is intentional: if you do not know what to look for, the catalog provides a comprehensive survey of the most clinically validated H&E features across all tumor types.
@@ -209,7 +212,7 @@ The same routing logic also controls which LLM backend is used:
 ## How Everything Fits Together
 
 ```
-Drug + MOA + Tumor Type
+Drug + MOA
         │
         ├─ config.py classifies MOA → weights for each feature category
         │
@@ -233,7 +236,8 @@ Drug + MOA + Tumor Type
         HIFHypothesis list with narrative, scores, ROI, measurement method
 ```
 
-The strict separation between retrieval, ranking, and generation is what makes this system trustworthy for clinical research use.
+The strict separation between retrieval, ranking, and generation makes the workflow
+auditable for research use. It is not a clinically validated diagnostic or treatment tool.
 
 ---
 

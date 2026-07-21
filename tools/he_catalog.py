@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — H&E Feature Knowledge Base
+MOA-to-HIF Evidence Prioritization Agent — H&E Feature Knowledge Base
 Structured catalog of Human-Interpretable Features (HIFs) measurable on H&E slides.
 Each entry describes a feature, its measurement method, evidence level, and the
 MOA classes / tumor types for which it has prognostic or predictive evidence.

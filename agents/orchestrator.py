@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — Master Orchestrator
+MOA-to-HIF Evidence Prioritization Agent — Master Orchestrator
 Runs the full 4-agent pipeline in the correct order with progress tracking.
 Handles errors gracefully: any single agent failure is logged and skipped.
 Tumor-type agnostic — no indication is required to run.
@@ -153,24 +153,27 @@ class PathologyOrchestrator:
         task = _add_task("[4/4] LLM synthesis (direct + analogical reasoning)...")
         final_hypotheses = pre_ranked
         llm_backend_name = "none"
-        try:
-            backend = get_backend(
-                drug_name=drug_name, moa=moa_description, override=self.backend_override
-            )
-            llm_backend_name = backend.name
-            synthesis_agent = SynthesisAgent(backend)
-            final_hypotheses = await synthesis_agent.run(
-                drug_name=drug_name,
-                moa_description=moa_description,
-                moa_class=moa_class,
-                pre_ranked_hypotheses=pre_ranked,
-                all_evidence=all_evidence,
-                top_n=top_n,
-            )
-            successful_sources.append(f"LLM:{llm_backend_name}")
-        except Exception as exc:
-            logger.error("[Orchestrator] SynthesisAgent failed: %s", exc)
-            failed_sources.append(f"LLM:{llm_backend_name}")
+        if self.backend_override == "none":
+            logger.info("[Orchestrator] LLM synthesis skipped (--no-llm).")
+        else:
+            try:
+                backend = get_backend(
+                    drug_name=drug_name, moa=moa_description, override=self.backend_override
+                )
+                llm_backend_name = backend.name
+                synthesis_agent = SynthesisAgent(backend)
+                final_hypotheses = await synthesis_agent.run(
+                    drug_name=drug_name,
+                    moa_description=moa_description,
+                    moa_class=moa_class,
+                    pre_ranked_hypotheses=pre_ranked,
+                    all_evidence=all_evidence,
+                    top_n=top_n,
+                )
+                successful_sources.append(f"LLM:{llm_backend_name}")
+            except Exception as exc:
+                logger.error("[Orchestrator] SynthesisAgent failed: %s", exc)
+                failed_sources.append(f"LLM:{llm_backend_name}")
         _complete_task(task)
 
         elapsed = time.time() - start_time
@@ -186,8 +189,10 @@ class PathologyOrchestrator:
             moa_class=moa_class,
             llm_backend_used=llm_backend_name,
             hypotheses=final_hypotheses,
-            failed_sources=list(set(failed_sources)),
-            successful_sources=list(set(successful_sources)),
+            # dict.fromkeys dedups while preserving insertion order — plain set()
+            # would make source ordering nondeterministic between runs.
+            failed_sources=list(dict.fromkeys(failed_sources)),
+            successful_sources=list(dict.fromkeys(successful_sources)),
             total_features_evaluated=len(all_evidence),
             run_metadata={
                 "elapsed_seconds": round(elapsed, 2),

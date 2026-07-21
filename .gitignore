@@ -18,6 +18,7 @@ env/
 # Cache / runtime artifacts
 .cache/
 logs/*.log
+output/*
 
 # OS / editor
 .DS_Store

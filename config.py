@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — Central Configuration
+MOA-to-HIF Evidence Prioritization Agent — Central Configuration
 H&E Human-Interpretable Feature recommendation pipeline.
 All parameters, scoring weights, MOA routing rules, and API URLs live here.
 """

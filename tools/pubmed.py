@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — PubMed Literature Search
+MOA-to-HIF Evidence Prioritization Agent — PubMed Literature Search
 Searches PubMed for H&E pathology feature evidence for a given drug + tumor type.
 Returns NormalizedPathologyFeature records from literature.
 
@@ -15,10 +15,12 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import ssl
 import xml.etree.ElementTree as ET
 from typing import Any
 
 import aiohttp
+import certifi
 
 from config import PUBMED_EUTILS_BASE, PUBMED_MAX_RESULTS, NCBI_API_KEY, HTTP_TIMEOUT
 from models.schemas import (
@@ -30,6 +32,12 @@ from models.schemas import (
 from tools.cache import cached_api_call
 
 logger = logging.getLogger(__name__)
+
+# Use certifi's CA bundle instead of the interpreter's default trust store —
+# some Python.org macOS installs ship without auto-installed system certs,
+# which otherwise causes CERTIFICATE_VERIFY_FAILED on every HTTPS request.
+# This keeps certificate verification enabled (unlike a bare `ssl=False`).
+_SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 
 
 def _build_params(extra: dict[str, Any]) -> dict[str, str]:
@@ -60,9 +68,8 @@ async def search_pubmed_ids(query: str, max_results: int = PUBMED_MAX_RESULTS) -
         "usehistory": "y",
         "sort": "relevance",
     })
-    # ssl=False: Python 3.10 on macOS doesn't auto-install SSL certs for stdlib
-    connector = aiohttp.TCPConnector(ssl=False)
     try:
+        connector = aiohttp.TCPConnector(ssl=_SSL_CONTEXT)
         async with aiohttp.ClientSession(
             connector=connector,
             timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT),
@@ -100,8 +107,8 @@ async def fetch_pubmed_abstracts(pmids: tuple[str, ...]) -> list[dict[str, str]]
         "retmode": "xml",
     })
 
-    connector = aiohttp.TCPConnector(ssl=False)
     try:
+        connector = aiohttp.TCPConnector(ssl=_SSL_CONTEXT)
         async with aiohttp.ClientSession(
             connector=connector,
             timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT),

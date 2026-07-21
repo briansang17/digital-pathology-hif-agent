@@ -1,9 +1,10 @@
-# Digital Pathology HIF Agent — Dependencies
+# MOA-to-HIF Evidence Prioritization Agent — Dependencies
 # Mirrors oncomoa_agent/requirements.txt; no image-processing libraries needed.
 
 # ─── Async HTTP ───────────────────────────────────────────────────────────────
 aiohttp>=3.9.0
 aiofiles>=23.2.0
+certifi>=2024.2.2
 
 # ─── Data Validation ──────────────────────────────────────────────────────────
 pydantic>=2.6.0

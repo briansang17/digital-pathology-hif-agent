@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — Feature Ranking Agent
+MOA-to-HIF Evidence Prioritization Agent — Feature Ranking Agent
 Deterministic evidence scoring engine for H&E Human-Interpretable Features.
 Aggregates catalog + PubMed evidence into per-HIF CandidateHIF objects,
 computes composite scores, and returns a ranked list ready for LLM synthesis.

@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — Feature Synthesis Agent (LLM Step)
+MOA-to-HIF Evidence Prioritization Agent — Feature Synthesis Agent (LLM Step)
 Takes the pre-ranked HIFHypothesis list and generates biological narrative
 explaining why each H&E feature is prognostically or predictively relevant
 for the given drug MOA.
@@ -220,11 +220,12 @@ class SynthesisAgent:
         top_n: int = 10,
     ) -> list[HIFHypothesis]:
         """
-        Generate enriched HIF hypotheses using the LLM.
+        Generate narrative-enriched HIF hypotheses using the LLM.
 
-        The LLM receives pre-ranked hypotheses + evidence context (direct + analogical)
-        and synthesizes ranked HIF narratives. Uses auth-aware backend fallback so
-        a bad Gemini API key never blocks the run — Ollama picks up automatically.
+        The LLM receives retrieved evidence and supplies narrative text only. Scores,
+        ranks, evidence provenance, and measurement metadata always remain those from
+        the deterministic RankingAgent. Uses auth-aware backend fallback so a bad
+        Gemini API key never blocks the run — Ollama picks up automatically.
 
         Args:
             drug_name: Drug name.
@@ -251,6 +252,7 @@ class SynthesisAgent:
             moa_class=moa_class,
             evidence_summary=evidence_context,
             top_n=top_n,
+            pre_ranked_names=[h.feature_name for h in pre_ranked_hypotheses],
         )
         # Simpler prompt for local 7B models — fewer fields, shorter context
         local_prompt = build_hif_prompt_local(
@@ -368,15 +370,12 @@ class SynthesisAgent:
         fallback_hypotheses: list[HIFHypothesis],
     ) -> list[HIFHypothesis]:
         """
-        Parse LLM JSON and merge hypothesis narrative into pre-ranked hypotheses.
+        Parse LLM JSON and merge narrative text into pre-ranked hypotheses.
 
-        Hybrid strategy:
-          1. Parse LLM JSON array; handle both 'feature_name' and 'name' keys.
-          2. For each LLM item: validate into HIFHypothesis, inherit authoritative
-             scores from matching pre-ranked item (name match, then positional).
-          3. Pre-ranked items not matched by LLM are padded at the end.
-          This ensures: no 'Unknown Feature' from missing keys, no score drift,
-          and the final list always has at least as many items as pre_ranked.
+        RankingAgent is authoritative. The LLM is allowed to populate only the
+        ``hypothesis`` field for an exact feature-name match; it cannot modify order,
+        scores, sources, or other ranking metadata. Unmatched features retain their
+        deterministic placeholder narrative.
         """
         try:
             raw_list = _extract_json_array(raw_response)
@@ -396,58 +395,19 @@ class SynthesisAgent:
         def _norm(s: str) -> str:
             return re.sub(r"[^a-z0-9]", "", s.lower())
 
-        ranked_lookup: dict[str, HIFHypothesis] = {
-            _norm(h.feature_name): h for h in fallback_hypotheses
-        }
+        narratives: dict[str, str] = {}
+        for raw_item in raw_list:
+            feature_name = raw_item.get("feature_name", raw_item.get("name", ""))
+            hypothesis = raw_item.get("hypothesis", "")
+            if isinstance(feature_name, str) and isinstance(hypothesis, str) and hypothesis.strip():
+                narratives[_norm(feature_name)] = hypothesis.strip()
 
-        validated: list[HIFHypothesis] = []
-        used_keys: set[str] = set()
+        enriched: list[HIFHypothesis] = []
+        for pre_ranked in fallback_hypotheses:
+            authoritative = pre_ranked.model_copy(deep=True)
+            narrative = narratives.get(_norm(authoritative.feature_name))
+            if narrative:
+                authoritative.hypothesis = narrative
+            enriched.append(authoritative)
 
-        for idx, raw_item in enumerate(raw_list):
-            # Normalise: handle both 'feature_name' and 'name' keys
-            if "feature_name" not in raw_item and "name" in raw_item:
-                raw_item["feature_name"] = raw_item["name"]
-
-            hyp = _validate_hypothesis(raw_item)
-            if hyp is None:
-                continue
-
-            key = _norm(hyp.feature_name)
-            pre = ranked_lookup.get(key)
-            if pre is None and idx < len(fallback_hypotheses):
-                pre = fallback_hypotheses[idx]
-
-            if pre is not None:
-                hyp.confidence_score = max(hyp.confidence_score, pre.confidence_score)
-                hyp.predictive_score = max(hyp.predictive_score, pre.predictive_score)
-                hyp.prognostic_score = max(hyp.prognostic_score, pre.prognostic_score)
-                hyp.rank = pre.rank
-                if not hyp.supporting_sources:
-                    hyp.supporting_sources = pre.supporting_sources
-                if not hyp.supporting_evidence:
-                    hyp.supporting_evidence = pre.supporting_evidence
-                if hyp.ranking_rationale.raw_score == 0:
-                    hyp.ranking_rationale = pre.ranking_rationale
-                if pre.roi and not hyp.roi:
-                    hyp.roi = pre.roi
-                if pre.roi_annotation_guide and not hyp.roi_annotation_guide:
-                    hyp.roi_annotation_guide = pre.roi_annotation_guide
-                if pre.measurement_method and not hyp.measurement_method:
-                    hyp.measurement_method = pre.measurement_method
-                used_keys.add(_norm(pre.feature_name))
-
-            validated.append(hyp)
-
-        # Pad with any pre-ranked items the LLM missed (to reach top_n)
-        target_n = len(fallback_hypotheses)
-        for pre in fallback_hypotheses:
-            if len(validated) >= target_n:
-                break
-            if _norm(pre.feature_name) not in used_keys:
-                validated.append(pre)
-
-        # Re-number ranks sequentially (LLM may have used its own ordering)
-        for i, hyp in enumerate(validated[:target_n], start=1):
-            hyp.rank = i
-
-        return validated[:target_n]
+        return enriched

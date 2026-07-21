@@ -1,5 +1,5 @@
 """
-Digital Pathology HIF Agent — Literature Agent
+MOA-to-HIF Evidence Prioritization Agent — Literature Agent
 Searches PubMed for H&E feature evidence for a given drug across all indications.
 
 Two search tracks run in parallel for every feature:
