@@ -106,6 +106,8 @@ Requires Python 3.10+. `--no-llm` runs the full retrieval + ranking pipeline wit
 
 Each folder has the exact command, reconstructed terminal output, and full `results.json`/`features_summary.csv` — useful for inspecting evidence provenance (`evidence_basis: direct` vs `analogical`) and the per-feature ranking rationale breakdown. See [`examples/README.md`](examples/README.md) for the full comparison.
 
+Two more folders — [`sample_run_pembrolizumab_live_llm/`](examples/sample_run_pembrolizumab_live_llm/) and [`sample_run_belzutifan_live_llm/`](examples/sample_run_belzutifan_live_llm/) — are **live** runs with a real Gemini key and a live PubMed search, showing analogical literature evidence actually merging into a feature's `evidence_basis` (`"direct"` → `"mixed"`) and moving its rank, plus a real Gemini-generated `hypothesis` narrative grounded in that retrieved evidence.
+
 ## Output schema
 
 Each ranked `HIFHypothesis` (see `models/schemas.py`) includes:

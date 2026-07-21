@@ -80,10 +80,13 @@ class RankingAgent:
         candidates: dict[str, CandidateHIF] = {}
 
         def get_or_create(feat: NormalizedPathologyFeature) -> CandidateHIF:
-            key = feat.source_id if feat.source == "HECatalog" else feat.feature_name
+            # Key by feature_name (not source_id) so catalog and PubMed/analogical
+            # evidence for the *same* HIF merge into one candidate instead of the
+            # PubMed hit silently spawning an orphan, catalog-less duplicate.
+            key = feat.feature_name
             if key not in candidates:
                 candidates[key] = CandidateHIF(
-                    feature_id=key,
+                    feature_id=feat.source_id,
                     feature_name=feat.feature_name,
                     feature_category=feat.feature_category,
                     measurement_method=feat.measurement_method,

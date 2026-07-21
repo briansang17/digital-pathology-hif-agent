@@ -1,0 +1,338 @@
+{
+  "drug_name": "belzutifan",
+  "moa_description": "HIF-2alpha inhibitor hypoxia pathway VHL-mutant tumors",
+  "tumor_type": "pan-cancer",
+  "moa_class": "hypoxia",
+  "llm_backend_used": "Gemini/gemini-2.5-flash",
+  "hypotheses": [
+    {
+      "rank": 1,
+      "feature_name": "Tumor Cell Density",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Count of tumor cells per unit area (cells/mm\u00b2) within the annotated tumor region",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 100.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "mixed",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_tumor_cell_density",
+        "PMID:16494521",
+        "PMID:41041327",
+        "PMID:38556173",
+        "PMID:26461001"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tumor_cell_density",
+          "claim": "High tumor cell density is associated with aggressive tumor biology and poor prognosis; useful as a denominator for immune infiltrate ratios and to normalize TIL density measurements."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:16494521",
+          "claim": "Dynamics of hypoxia, proliferation and apoptosis after irradiation in a murine tumor model."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:41041327",
+          "claim": "Bevacizumab and anlotinib combination therapy acts via HIF-1\u03b1 suppression to exert synergistic anti-angiogenic and anti-tumor effects in non-small cell lung cancer."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:38556173",
+          "claim": "MRI-guided dynamic risk assessment in cervical cancer based on tumor hypoxia at diagnosis and volume response at brachytherapy."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:26461001",
+          "claim": "Combination of Gold Nanoparticle-Conjugated Tumor Necrosis Factor-\u03b1 and Radiation Therapy Results in a Synergistic Antitumor Response in Murine Carcinoma Models."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 5,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 106.525
+      },
+      "hypothesis": "High tumor cell density is associated with aggressive tumor biology and poor prognosis (he_tumor_cell_density). [By analogy from hypoxia] Belzutifan, by inhibiting HIF-2alpha, may alter tumor cell proliferation and survival, potentially leading to changes in tumor cell density. This feature is measured as the count of tumor cell nuclei per unit area within the tumor region, often used to normalize immune infiltrate ratios."
+    },
+    {
+      "rank": 2,
+      "feature_name": "Tumor-Stroma Ratio (TSR)",
+      "feature_category": "composite",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Assess the hotspot area with the highest stromal proportion relative to tumor cells; select a representative 1\u20132 mm\u00b2 field in the invasive front or core with highest stroma-to-tumor ratio.",
+      "measurement_method": "In QuPath or manually on H&E, estimate the proportion of stroma (fibrous connective tissue + non-immune cells) vs viable tumor cells in a representative field. TSR = stroma area / (stroma + tumor area). Classify as stroma-low (<50%) vs stroma-high (\u226550%).",
+      "measurement_unit": "ratio (0\u20131) or categorical",
+      "confidence_score": 97.8593272171254,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_tumor_stroma_ratio"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tumor_stroma_ratio",
+          "claim": "High tumor-stroma ratio (stroma-rich) is a pan-cancer independent negative prognostic factor. In anti-angiogenic settings, VEGF drives desmoplastic stroma; stroma-high tumors are associated with immune exclusion and poor response to combination IO/an"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "hypoxia",
+        "raw_score": 101.8593272171254
+      },
+      "hypothesis": "High tumor-stroma ratio (stroma-rich) is a pan-cancer independent negative prognostic factor (he_tumor_stroma_ratio). Given belzutifan's role as a HIF-2alpha inhibitor, which can reduce VEGF, it may modulate the desmoplastic stroma, potentially altering the tumor-stroma ratio. This is measured as the proportion of tumor area occupied by tumor cells versus stromal components (e.g., fibroblasts, extracellular matrix, vessels) within a defined region of interest."
+    },
+    {
+      "rank": 3,
+      "feature_name": "Stromal Ratio",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Fraction of the tumor region occupied by stromal tissue (stroma + endothelial cells) versus tumor cells, expressed as a percentage",
+      "measurement_unit": "%",
+      "confidence_score": 91.74311926605505,
+      "predictive_score": 0.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_stromal_ratio"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_stromal_ratio",
+          "claim": "High tumor-associated stroma ratio (>50%) is an independent poor prognostic factor across multiple solid tumors and associated with EMT and reduced immune infiltration."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 96.24311926605505
+      },
+      "hypothesis": "High tumor-associated stroma ratio (>50%) is an independent poor prognostic factor across multiple solid tumors, associated with EMT and reduced immune infiltration (he_stromal_ratio). As a HIF-2alpha inhibitor, belzutifan's anti-angiogenic effects may reduce stromal components, potentially impacting this ratio. This is quantified as the percentage of the tumor area composed of stromal tissue (e.g., connective tissue, inflammatory cells, vessels) relative to the total tumor area."
+    },
+    {
+      "rank": 4,
+      "feature_name": "Tumor-Associated Macrophage Density",
+      "feature_category": "cell_density",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Count of macrophage-like cells (large round nuclei with pale cytoplasm) per mm\u00b2 in intratumoral and peritumoral compartments separately",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 91.74311926605505,
+      "predictive_score": 100.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_macrophage_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_macrophage_density",
+          "claim": "High TAM density is associated with poor prognosis in most solid tumors due to M2 polarization promoting immunosuppression; intratumoral TAM-to-lymphocyte ratio predicts checkpoint inhibitor resistance."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 96.24311926605505
+      },
+      "hypothesis": "High tumor-associated macrophage (TAM) density is associated with poor prognosis in most solid tumors due to M2 polarization promoting immunosuppression (he_macrophage_density). [By analogy from hypoxia] HIF-2alpha inhibition by belzutifan may reduce hypoxia-driven M2 polarization and recruitment of TAMs, potentially decreasing TAM density and altering the immunosuppressive microenvironment. This is measured by counting macrophage nuclei within the tumor region and normalizing by tumor area or tumor cell density."
+    },
+    {
+      "rank": 5,
+      "feature_name": "Tumor Necrosis Fraction",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Annotate all areas of coagulative necrosis within the tumor mass (pale, eosinophilic regions with ghost cells and no live nuclei); exclude treatment-related necrosis if known.",
+      "measurement_method": "Segment the whole tumor area on H&E. Identify necrotic regions as areas with loss of nuclear staining and ghost cell outlines. Report necrosis fraction = necrotic area / total tumor area (0\u20131).",
+      "measurement_unit": "fraction (0\u20131)",
+      "confidence_score": 91.74311926605505,
+      "predictive_score": 0.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_necrosis_fraction"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_necrosis_fraction",
+          "claim": "High tumor necrosis fraction reflects intratumoral hypoxia and predicts poor prognosis; in anti-VEGF settings it serves as a baseline hypoxia indicator and is reduced by successful vascular normalization. Relevant for HIF-2\u03b1 and VEGF-targeted therapi"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 96.24311926605505
+      },
+      "hypothesis": "High tumor necrosis fraction reflects intratumoral hypoxia and predicts poor prognosis; in anti-VEGF settings, it serves as a baseline hypoxia indicator and is reduced by successful vascular normalization (he_necrosis_fraction). Belzutifan, by inhibiting HIF-2alpha and its downstream pro-angiogenic effects, may reduce intratumoral hypoxia and consequently decrease the tumor necrosis fraction. This is measured as the percentage of the total tumor area exhibiting coagulative necrosis, characterized by ghost outlines of cells with loss of nuclear detail."
+    },
+    {
+      "rank": 6,
+      "feature_name": "Stromal Vascular Density",
+      "feature_category": "cell_density",
+      "feature_type": "both",
+      "roi": "stroma",
+      "roi_annotation_guide": "Annotate the tumor-associated stroma (peritumoral connective tissue). Focus on areas adjacent to viable tumor nests; exclude areas of necrosis, normal tissue, and large vessels (>100 \u00b5m diameter).",
+      "measurement_method": "In the annotated stroma, count vessel profiles (cross-sections showing open lumens with endothelial lining and/or red blood cells). Normalize by total stromal area. Optionally score vessel tortuosity (1\u20133 scale) from straight/normalized (1) to highly tortuous/glomeruloid (3). Report as vessels/mm\u00b2 and mean tortuosity score.",
+      "measurement_unit": "vessels/mm\u00b2; tortuosity score (1\u20133)",
+      "confidence_score": 91.74311926605505,
+      "predictive_score": 100.0,
+      "prognostic_score": 90.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_stromal_vessel_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_stromal_vessel_density",
+          "claim": "High stromal vascular density with tortuous vessel morphology indicates active tumor angiogenesis and predicts response to anti-VEGF therapy. Vessel normalization (reduced density, reduced tortuosity) after anti-VEGF treatment correlates with improve"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 96.24311926605505
+      },
+      "hypothesis": "High stromal vascular density with tortuous vessel morphology indicates active tumor angiogenesis and predicts response to anti-VEGF therapy (he_stromal_vessel_density). Belzutifan, as a HIF-2alpha inhibitor, reduces VEGF expression, thereby inhibiting angiogenesis and potentially leading to reduced stromal vascular density and vessel normalization. This is measured by counting distinct vessel lumens or endothelial cell clusters within the stromal compartment and normalizing by stromal area."
+    },
+    {
+      "rank": 7,
+      "feature_name": "TIL Exclusion Pattern Score",
+      "feature_category": "spatial_distance",
+      "feature_type": "predictive",
+      "roi": "invasive_margin",
+      "roi_annotation_guide": "Annotate the invasive margin: the zone 500 \u00b5m inward and outward from the tumor-stroma boundary. The excluded pattern is defined by TILs present in this zone but absent from tumor nests (intratumoral).",
+      "measurement_method": "Calculate the ratio of invasive margin TIL density to intratumoral TIL density. A ratio >5 defines the 'excluded' phenotype. Also compute the mean nearest-neighbor distance from margin TILs to the nearest tumor nest boundary (exclusion gap in \u00b5m). Higher gap = stronger exclusion.",
+      "measurement_unit": "margin:intratumoral TIL ratio; exclusion gap (\u00b5m)",
+      "confidence_score": 91.74311926605505,
+      "predictive_score": 100.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_tils_excluded_pattern"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tils_excluded_pattern",
+          "claim": "The immune-excluded phenotype \u2014 where TILs are trapped at the tumor margin by VEGF-driven stromal barriers \u2014 predicts poor response to checkpoint monotherapy. Anti-VEGF disrupts this exclusion mechanism; the shift from excluded to inflamed phenotype "
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 96.24311926605505
+      },
+      "hypothesis": "The immune-excluded phenotype, where TILs are trapped at the tumor margin by VEGF-driven stromal barriers, predicts poor response to checkpoint monotherapy (he_tils_excluded_pattern). Belzutifan, by inhibiting HIF-2alpha and reducing VEGF, may disrupt these stromal barriers, potentially converting an immune-excluded phenotype to an inflamed phenotype. This is scored qualitatively based on the spatial distribution of lymphocytes, classifying them as intratumoral, stromal, or excluded (peritumoral cuffing with minimal intratumoral infiltration)."
+    },
+    {
+      "rank": 8,
+      "feature_name": "Mitotic Index",
+      "feature_category": "cell_density",
+      "feature_type": "predictive",
+      "roi": "tumor_nest",
+      "roi_annotation_guide": "Annotate all viable tumor cell nests. Focus scoring on the most mitotically active 'hotspot' areas \u2014 select 10 high-power fields (HPF) at 400\u00d7 in regions of highest proliferative activity within tumor nests.",
+      "measurement_method": "Count mitotic figures (cells in any phase of mitosis: prophase, metaphase, anaphase, telophase) in 10 consecutive HPF (0.2 mm\u00b2 each) within tumor nests. Exclude necrosis and stroma. Report as mitotic figures per 10 HPF (MF/10HPF) or per mm\u00b2. In QuPath, train a classifier on mitotic figure morphology (condensed/fragmented basophilic chromatin) and apply to annotated tumor ROI.",
+      "measurement_unit": "mitotic figures per 10 HPF or per mm\u00b2",
+      "confidence_score": 91.74311926605505,
+      "predictive_score": 100.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_mitotic_index"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_mitotic_index",
+          "claim": "High mitotic index reflects rapid cell proliferation and predicts sensitivity to topoisomerase and tubulin-targeting ADC payloads. For TROP2-ADCs (sacituzumab govitecan, SN-38 payload), tumors with high mitotic rates show greater vulnerability to rep"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.5,
+        "moa_class": "hypoxia",
+        "raw_score": 96.24311926605505
+      },
+      "hypothesis": "High mitotic index reflects rapid cell proliferation (he_mitotic_index). [By analogy from hypoxia] Belzutifan, by inhibiting HIF-2alpha, is expected to reduce tumor cell proliferation, which may lead to a decrease in mitotic index. This is measured by counting the number of mitotic figures per high-power field (HPF) or per unit area within the most proliferative regions of the tumor."
+    }
+  ],
+  "failed_sources": [],
+  "successful_sources": [
+    "HECatalog",
+    "PubMed",
+    "RankingEngine",
+    "LLM:Gemini/gemini-2.5-flash"
+  ],
+  "total_features_evaluated": 36,
+  "run_metadata": {
+    "elapsed_seconds": 16.4,
+    "total_evidence": 36,
+    "catalog_features": 31,
+    "pubmed_features": 5,
+    "pubmed_ids_found": 5,
+    "moa_class": "hypoxia",
+    "analogical_search": true
+  }
+}

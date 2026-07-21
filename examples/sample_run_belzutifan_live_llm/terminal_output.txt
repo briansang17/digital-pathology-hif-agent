@@ -1,0 +1,162 @@
+╭─────────────────────────────────────────────────────────────╮
+│ MOA-to-HIF Evidence Prioritization Agent                    │
+│ H&E Human-Interpretable Feature Recommendation · Pan-Cancer │
+╰─────────────────────────────────────────────────────────────╯
+Drug: belzutifan
+MOA: HIF-2alpha inhibitor hypoxia pathway VHL-mutant tumors
+Scope: Pan-cancer (all solid tumors)
+MOA Class: hypoxia
+Top N: 8
+Backend: gemini
+Analogical search: enabled
+
+[07/20/26 21:19:09] INFO     INFO:agents.orchestrator:==========================
+                             ==================================                 
+                    INFO     INFO:agents.orchestrator:DigPath HIF Pipeline      
+                             START: drug=belzutifan moa_class=hypoxia           
+                             (pan-cancer)                                       
+                    INFO     INFO:agents.orchestrator:==========================
+                             ==================================                 
+                    INFO     INFO:agents.he_feature_agent:[HEFeatureAgent]      
+                             drug=belzutifan | moa_class=hypoxia (tumor-type    
+                             agnostic)                                          
+                    INFO     INFO:agents.he_feature_agent:[HEFeatureAgent]      
+                             Retrieved 31 H&E features from catalog             
+                    INFO     INFO:agents.literature_agent:[LiteratureAgent]     
+                             Searching PubMed for 5 HIFs | drug=belzutifan      
+                             moa_class=hypoxia (direct + analogical + 2 proxy   
+                             drugs: ['sunitinib', 'bevacizumab'])               
+                    INFO     INFO:agents.literature_agent:[LiteratureAgent]     
+                             Found 5 records (0 direct, 5 analogical) | 5 unique
+                             PMIDs                                              
+                    INFO     INFO:agents.orchestrator:[Orchestrator] Literature:
+                             0 direct, 5 analogical PMIDs                       
+                    INFO     INFO:agents.ranking_agent:[RankingAgent] Scoring 36
+                             evidence items | moa_class=hypoxia                 
+                    INFO     INFO:agents.ranking_agent:[RankingAgent] 31 valid  
+                             candidates | top: Tumor Cell Density (score=106.5) 
+                    INFO     INFO:llm.backend:[LLM] Backend: Gemini (explicit)  
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent]       
+                             Starting LLM synthesis with Gemini/gemini-2.5-flash
+                             | drug=belzutifan moa_class=hypoxia (pan-cancer)   
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent] Gemini
+                             primary — Ollama queued as auth-error fallback     
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent] Trying
+                             backend: Gemini/gemini-2.5-flash                   
+[07/20/26 21:19:10] INFO     INFO:google_genai.models:AFC is enabled with max   
+                             remote calls: 10.                                  
+[07/20/26 21:19:26] INFO     INFO:httpx:HTTP Request: POST                      
+                             https://generativelanguage.googleapis.com/v1beta/mo
+                             dels/gemini-2.5-flash:generateContent "HTTP/1.1 200
+                             OK"                                                
+                    INFO     INFO:llm.backend:[Gemini/gemini-2.5-flash]         
+                             Response: 4503 chars                               
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent] Parsed
+                             8 LLM items. Pre-ranked: 8.                        
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent]       
+                             Gemini/gemini-2.5-flash succeeded: 8 hypotheses    
+                    INFO     INFO:agents.orchestrator:DigPath HIF Pipeline      
+                             COMPLETE in 16.4s | 8 features                     
+
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ MOA-to-HIF Evidence Prioritization Agent Results                             │
+│ Drug: belzutifan | Scope: Pan-cancer | MOA class: hypoxia | Evidence items:  │
+│ 36 | LLM: Gemini/gemini-2.5-flash                                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+                     Top 8 H&E Human-Interpretable Features                     
+┏┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━┳━━━┳━━┳━━━━━━━┓
+┃┃ Feature                  ┃ ROI        ┃ Category     ┃ Type  ┃ … ┃  ┃ Basis ┃
+┡╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━╇━━━╇━━╇━━━━━━━┩
+││ Tumor Cell Density       │ whole_sec… │ cell_density │ prog… │ … │  │ mixed │
+││ Tumor-Stroma Ratio (TSR) │ whole_sec… │ composite    │ prog… │ … │  │ dire… │
+││ Stromal Ratio            │ whole_sec… │ cell_density │ prog… │ … │  │ dire… │
+││ Tumor-Associated         │ whole_sec… │ cell_density │ both  │ … │  │ dire… │
+││ Macrophage Density       │            │              │       │   │  │       │
+││ Tumor Necrosis Fraction  │ whole_sec… │ cell_density │ prog… │ … │  │ dire… │
+││ Stromal Vascular Density │ stroma     │ cell_density │ both  │ … │  │ dire… │
+││ TIL Exclusion Pattern    │ invasive_… │ spatial_dis… │ pred… │ … │  │ dire… │
+││ Score                    │            │              │       │   │  │       │
+││ Mitotic Index            │ tumor_nest │ cell_density │ pred… │ … │  │ dire… │
+└┴──────────────────────────┴────────────┴──────────────┴───────┴───┴──┴───────┘
+
+Feature Measurement Methods & Rationale:
+
+#1 Tumor Cell Density (prognostic) 
+  ROI: whole_section
+  Measure: Count of tumor cells per unit area (cells/mm²) within the annotated 
+tumor region
+  Rationale: High tumor cell density is associated with aggressive tumor biology
+and poor prognosis (he_tumor_cell_density). [By analogy from hypoxia] 
+Belzutifan, by inhibiting HIF-2alpha, may alter tumor cell proliferation and 
+survival, potentially leading to changes in tumor cell density. This feature is 
+measured as the count of tumor cell nuclei per unit area within the tumor 
+region, often used to normalize immune infiltrate ratios.
+
+#2 Tumor-Stroma Ratio (TSR) (prognostic) 
+  ROI: whole_section
+  Annotation: Assess the hotspot area with the highest stromal proportion 
+relative to tumor cells; select a representative 1–2 mm² field in the invasive 
+front or core with highest stroma-to-tumor ratio.
+  Measure: In QuPath or manually on H&E, estimate the proportion of stroma 
+(fibrous connective tissue + non-immune cells) vs viable tumor cells in a 
+representative field. TSR = stroma area / (stroma + tumor area). Classify as 
+stroma-low (<50%) vs stroma-high (≥50%).
+  Rationale: High tumor-stroma ratio (stroma-rich) is a pan-cancer independent 
+negative prognostic factor (he_tumor_stroma_ratio). Given belzutifan's role as a
+HIF-2alpha inhibitor, which can reduce VEGF, it may modulate the desmoplastic 
+stroma, potentially altering the tumor-stroma ratio. This is measured as the 
+proportion of tumor area occupied by tumor cells versus stromal components 
+(e.g., fibroblasts, extracellular matrix, vessels) within a defined region of 
+interest.
+
+#3 Stromal Ratio (prognostic) 
+  ROI: whole_section
+  Measure: Fraction of the tumor region occupied by stromal tissue (stroma + 
+endothelial cells) versus tumor cells, expressed as a percentage
+  Rationale: High tumor-associated stroma ratio (>50%) is an independent poor 
+prognostic factor across multiple solid tumors, associated with EMT and reduced 
+immune infiltration (he_stromal_ratio). As a HIF-2alpha inhibitor, belzutifan's 
+anti-angiogenic effects may reduce stromal components, potentially impacting 
+this ratio. This is quantified as the percentage of the tumor area composed of 
+stromal tissue (e.g., connective tissue, inflammatory cells, vessels) relative 
+to the total tumor area.
+
+#4 Tumor-Associated Macrophage Density (both) 
+  ROI: whole_section
+  Measure: Count of macrophage-like cells (large round nuclei with pale 
+cytoplasm) per mm² in intratumoral and peritumoral compartments separately
+  Rationale: High tumor-associated macrophage (TAM) density is associated with 
+poor prognosis in most solid tumors due to M2 polarization promoting 
+immunosuppression (he_macrophage_density). [By analogy from hypoxia] HIF-2alpha 
+inhibition by belzutifan may reduce hypoxia-driven M2 polarization and 
+recruitment of TAMs, potentially decreasing TAM density and altering the 
+immunosuppressive microenvironment. This is measured by counting macrophage 
+nuclei within the tumor region and normalizing by tumor area or tumor cell 
+density.
+
+#5 Tumor Necrosis Fraction (prognostic) 
+  ROI: whole_section
+  Annotation: Annotate all areas of coagulative necrosis within the tumor mass 
+(pale, eosinophilic regions with ghost cells and no live nuclei); exclude 
+treatment-related necrosis if known.
+  Measure: Segment the whole tumor area on H&E. Identify necrotic regions as 
+areas with loss of nuclear staining and ghost cell outlines. Report necrosis 
+fraction = necrotic area / total tumor area (0–1).
+  Rationale: High tumor necrosis fraction reflects intratumoral hypoxia and 
+predicts poor prognosis; in anti-VEGF settings, it serves as a baseline hypoxia 
+indicator and is reduced by successful vascular normalization 
+(he_necrosis_fraction). Belzutifan, by inhibiting HIF-2alpha and its downstream 
+pro-angiogenic effects, may reduce intratumoral hypoxia and consequently 
+decrease the tumor necrosis fraction. This is measured as the percentage of the 
+total tumor area exhibiting coagulative necrosis, characterized by ghost 
+outlines of cells with loss of nuclear detail.
+
+Sources: RankingEngine, PubMed, LLM:Gemini/gemini-2.5-flash, HECatalog
+
+Completed in 16.4s | Log: logs/digpath.log
+Saved: 
+/Users/briansang/Desktop/llm_informatics/digital_pathology/output/results.json
+Saved: 
+/Users/briansang/Desktop/llm_informatics/digital_pathology/output/features_summa
+ry.csv

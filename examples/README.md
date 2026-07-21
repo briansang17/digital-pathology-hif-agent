@@ -15,6 +15,11 @@ mechanism of action changes which feature categories get weighted higher.
 | [`sample_run_belzutifan/`](sample_run_belzutifan/) | Welireg | `hypoxia` | Tumor-Stroma Ratio (TSR) |
 | [`sample_run_trastuzumab_deruxtecan/`](sample_run_trastuzumab_deruxtecan/) | Enhertu | `adc` | Tumor Cell Density |
 
+Two more folders, [`sample_run_pembrolizumab_live_llm/`](sample_run_pembrolizumab_live_llm/) and
+[`sample_run_belzutifan_live_llm/`](sample_run_belzutifan_live_llm/), are **live** runs with a real
+Gemini API key and a live PubMed search (not reproducible byte-for-byte, since literature
+results and LLM phrasing can vary run to run) — see below.
+
 Each folder contains the same four files:
 
 | File | What it is |
@@ -64,6 +69,63 @@ to a DNA-damaging cytotoxic payload:
 Mitotic Index and Nuclear Pleomorphism Score (ranks 6–7) also surface here — both
 reflect vulnerability to topoisomerase/DNA-damaging payloads like deruxtecan, and
 don't rank at all for the checkpoint or hypoxia runs above.
+
+## Sample run: `pembrolizumab`, live PubMed + Gemini synthesis
+
+Unlike the three snapshots above (`--no-llm`, catalog only), this run used a real
+`GEMINI_API_KEY` and let the `LiteratureAgent` hit the live NCBI PubMed API instead of
+relying only on the curated catalog. It found real literature and folded it into the
+ranking:
+
+```
+[LiteratureAgent] Found 5 records (0 direct, 5 analogical) | 5 unique PMIDs
+```
+
+**Immune Phenotype Classification** — normally ranked #5 on catalog evidence alone —
+picked up 5 real PubMed abstracts via analogical search (MOA-class-level query, since no
+drug-specific hits existed) and moved up to **rank #3**, with `evidence_basis: "mixed"`:
+
+```json
+"evidence_basis": "mixed",
+"supporting_sources": ["he_immune_phenotype", "PMID:34571969", "PMID:35538548", "PMID:33579421", "PMID:31942077"],
+"ranking_rationale": { "analogical_hits": 5, "raw_score": 94.18 }
+```
+
+The `hypothesis` field is Gemini's narrative summary — written from the retrieved
+evidence only, with no ability to alter rank, score, or evidence_basis (see
+[`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md) for how that separation is enforced).
+
+Note: NCBI's public E-utilities API rate-limits unauthenticated traffic to ~3
+requests/sec. Since this pipeline fires several parallel PubMed queries per run, some
+queries may return `429 Too Many Requests` — cached/retried queries usually succeed on a
+second run. Set `NCBI_API_KEY` in `.env` for a much higher rate limit in production use.
+
+## Sample run: `belzutifan`, live PubMed + Gemini synthesis
+
+Same idea, different MOA class (`hypoxia`, which auto-routes to Ollama by default — this
+run used `--backend gemini` to force the Gemini narrative path instead). Again, live
+PubMed evidence changed the ranking, not just the prose:
+
+```
+[LiteratureAgent] Found 5 records (0 direct, 5 analogical) | 5 unique PMIDs
+```
+
+**Tumor Cell Density** (already rank #1 on catalog evidence) picked up 5 real
+hypoxia/anti-angiogenic PubMed abstracts via analogical search — papers on HIF-1α
+suppression in NSCLC, tumor hypoxia/radiation dynamics, and MRI-based hypoxia risk
+assessment in cervical cancer — pushing its `evidence_basis` to `"mixed"`:
+
+```json
+"evidence_basis": "mixed",
+"supporting_sources": ["he_tumor_cell_density", "PMID:16494521", "PMID:41041327", "PMID:38556173", "PMID:26461001"],
+"ranking_rationale": { "analogical_hits": 5, "raw_score": 106.5 }
+```
+
+Gemini's narrative even flags analogical reasoning explicitly for one feature: *"[By
+analogy from hypoxia] HIF-2alpha inhibition by belzutifan may reduce hypoxia-driven M2
+polarization..."* — because that feature's only literature support came from the
+MOA-class-level search, not belzutifan-specific studies (belzutifan is a newer drug with
+sparse dedicated pathology literature).
 
 ## Running it yourself
 

@@ -1,0 +1,338 @@
+{
+  "drug_name": "pembrolizumab",
+  "moa_description": "PD-1 checkpoint inhibitor",
+  "tumor_type": "pan-cancer",
+  "moa_class": "checkpoint",
+  "llm_backend_used": "Gemini/gemini-2.5-flash",
+  "hypotheses": [
+    {
+      "rank": 1,
+      "feature_name": "Stromal TIL Score",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Percent of stromal area occupied by mononuclear inflammatory cells (lymphocytes + plasma cells) per TIIC Working Group guidelines",
+      "measurement_unit": "%",
+      "confidence_score": 100.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_stromal_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_stromal_til",
+          "claim": "High stromal TIL score is an independent prognostic marker associated with improved OS in TNBC and NSCLC, and predicts response to checkpoint inhibitors and anthracycline-based chemotherapy."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 105.0
+      },
+      "hypothesis": "High stromal TIL score indicates a robust immune presence within the tumor microenvironment, suggesting an active anti-tumor immune response that can be further enhanced by PD-1 blockade. This feature is an independent prognostic marker and predicts response to checkpoint inhibitors. To measure, quantify the density of lymphocytes within the tumor stroma, excluding tumor nests, expressed as a percentage of the stromal area or as cells/mm\u00b2."
+    },
+    {
+      "rank": 2,
+      "feature_name": "Immunoscore",
+      "feature_category": "immune_phenotype",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Quantify CD3+ and CD8+ cell densities (or lymphocytes as proxy on H&E) at two tumor regions: tumor core and invasive margin. Classify as Immunoscore 0\u20134 based on density percentiles.",
+      "measurement_unit": "score 0\u20134",
+      "confidence_score": 100.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_immunoscore"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_immunoscore",
+          "claim": "Immunoscore is a validated pan-cancer prognostic biomarker; high Immunoscore (3\u20134) is associated with improved OS independent of TNM stage and predicts response to adjuvant immunotherapy in Stage III CRC."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 105.0
+      },
+      "hypothesis": "A high Immunoscore reflects a strong anti-tumor immune response, characterized by the density and spatial distribution of lymphocytes within the tumor core and invasive margin. This comprehensive immune assessment is associated with improved overall survival and predicts response to immunotherapy. While typically quantified by IHC, an H&E-based estimation involves segmenting the tumor core and invasive margin, detecting all identifiable lymphocytes, and assigning a composite score based on their densities in these two compartments."
+    },
+    {
+      "rank": 3,
+      "feature_name": "Immune Phenotype Classification",
+      "feature_category": "immune_phenotype",
+      "feature_type": "predictive",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Classify the TME into: Inflamed (TILs throughout tumor parenchyma), Excluded (TILs at margin/stroma only), or Desert (absent TILs). Based on intratumoral vs stromal TIL distribution.",
+      "measurement_unit": "class (inflamed/excluded/desert)",
+      "confidence_score": 87.83333333333334,
+      "predictive_score": 80.144,
+      "prognostic_score": 0.6839999999999999,
+      "evidence_level": "B",
+      "evidence_basis": "mixed",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_immune_phenotype",
+        "PMID:34571969",
+        "PMID:35538548",
+        "PMID:33579421",
+        "PMID:31942077"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_immune_phenotype",
+          "claim": "Inflamed phenotype predicts response to PD-1/PD-L1 checkpoint inhibitors; excluded phenotype identifies patients who may benefit from stromal targeting combinations; desert phenotype has poor IO response across tumor types."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:34571969",
+          "claim": "Molecular Markers and Targets in Melanoma."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:35538548",
+          "claim": "Refining colorectal cancer classification and clinical stratification through a single-cell atlas."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:33579421",
+          "claim": "Hepatocellular carcinoma (HCC): Epidemiology, etiology and molecular classification."
+        },
+        {
+          "source": "PubMed-Analogical",
+          "id": "PMID:31942077",
+          "claim": "B cells are associated with survival and immunotherapy response in sarcoma."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 5,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 94.18333333333334
+      },
+      "hypothesis": "The immune phenotype (inflamed, excluded, desert) describes the spatial distribution of immune cells relative to tumor cells, directly influencing the efficacy of PD-1 blockade. An inflamed phenotype, characterized by intratumoral T-cell infiltration, predicts response to PD-1/PD-L1 checkpoint inhibitors. To measure, classify tumors by visually assessing or using image analysis to determine if lymphocytes are primarily within tumor nests (inflamed), at the tumor periphery/stroma (excluded), or largely absent (desert)."
+    },
+    {
+      "rank": 4,
+      "feature_name": "Intratumoral TIL Density",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Count of lymphocytes infiltrating tumor cell nests per unit area (cells/mm\u00b2) or as a percent of tumor nests with infiltrating lymphocytes",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 83.33333333333334,
+      "predictive_score": 80.0,
+      "prognostic_score": 80.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_intratumoral_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_intratumoral_til",
+          "claim": "Intratumoral TIL density correlates with pathologic complete response to neoadjuvant therapy in TNBC and predicts benefit from checkpoint inhibition in multiple tumor types."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 88.33333333333334
+      },
+      "hypothesis": "High intratumoral TIL density signifies active immune recognition and infiltration directly within tumor nests, providing a direct target population for PD-1 blockade to enhance anti-tumor activity. This feature predicts benefit from checkpoint inhibition across multiple tumor types. To measure, quantify the number of lymphocytes per unit area within the tumor cell nests, expressed as cells/mm\u00b2 or as a percentage of the tumor area occupied by lymphocytes."
+    },
+    {
+      "rank": 5,
+      "feature_name": "Invasive Margin TIL Density",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Density of lymphocytes at the tumor-stroma interface (within 500 \u00b5m of the leading edge), reported as cells/mm\u00b2",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 83.33333333333334,
+      "predictive_score": 80.0,
+      "prognostic_score": 80.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_invasive_margin_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_invasive_margin_til",
+          "claim": "High TIL density at the invasive margin is a component of the Immunoscore and associated with improved survival and checkpoint inhibitor benefit in CRC."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 88.33333333333334
+      },
+      "hypothesis": "A high density of lymphocytes at the invasive margin suggests an active immune response attempting to contain tumor spread, which can be potentiated by PD-1 inhibition to overcome immune evasion mechanisms at this critical interface. This feature is associated with improved survival and checkpoint inhibitor benefit. To measure, quantify the density of lymphocytes within a defined band (e.g., 0.5-1 mm) at the interface between the tumor and the surrounding normal tissue, expressed as cells/mm\u00b2."
+    },
+    {
+      "rank": 6,
+      "feature_name": "Post-ADC ICD TIL Infiltration Pattern",
+      "feature_category": "til_score",
+      "feature_type": "predictive",
+      "roi": "tumor_nest",
+      "roi_annotation_guide": "Annotate areas within tumor nests showing lymphocyte infiltration adjacent to or within necrotic/apoptotic tumor cell clusters. Focus on intraepithelial compartments \u2014 TILs within tumor nests, not just peritumoral stroma.",
+      "measurement_method": "Quantify intratumoral TILs (within tumor cell nests, not stroma) using TIIC Working Group guidelines adapted for intraepithelial localization. Compute intraepithelial TIL% = lymphocytes within tumor nests / total cells within nests \u00d7 100. Also calculate apoptotic index (cells with condensed/fragmented nuclei and cytoplasmic shrinkage) as a proxy for payload-driven immunogenic cell death.",
+      "measurement_unit": "intraepithelial TIL% ; apoptotic index",
+      "confidence_score": 83.33333333333334,
+      "predictive_score": 80.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_icd_til_infiltrate"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_icd_til_infiltrate",
+          "claim": "ADC payloads (especially topoisomerase I inhibitors like SN-38 and DXd) cause immunogenic cell death (ICD), releasing DAMPs that drive de novo T cell infiltration into tumor nests. Baseline intraepithelial TIL infiltration is a predictive biomarker f"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 88.33333333333334
+      },
+      "hypothesis": "Baseline intraepithelial TILs predict response to subsequent immunotherapy, particularly in contexts where immunogenic cell death (ICD) from prior therapies (e.g., ADCs) may drive de novo T cell infiltration into tumor nests. Pembrolizumab can then activate these newly infiltrated T cells, enhancing the anti-tumor immune response. To measure, quantify the density of lymphocytes located within the epithelial tumor nests, expressed as cells/mm\u00b2."
+    },
+    {
+      "rank": 7,
+      "feature_name": "TIL Hotspot Density",
+      "feature_category": "spatial_clustering",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Maximum TIL density in a 500\u00d7500 \u00b5m sliding window across the tumor, identifying hotspot regions of immune aggregation",
+      "measurement_unit": "cells/mm\u00b2 (hotspot)",
+      "confidence_score": 66.66666666666666,
+      "predictive_score": 64.0,
+      "prognostic_score": 64.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_tls_hotspot"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tls_hotspot",
+          "claim": "TIL hotspot density (best tumor area) outperforms mean TIL score for predicting pCR to neoadjuvant chemotherapy in TNBC and benefit from checkpoint inhibition in NSCLC."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "checkpoint",
+        "raw_score": 70.66666666666666
+      },
+      "hypothesis": "High TIL hotspot density, representing localized regions of intense immune activity, indicates a robust anti-tumor immune response that can be further amplified by PD-1 blockade. This feature outperforms mean TIL score for predicting benefit from checkpoint inhibition. To measure, identify regions within the tumor with the highest density of lymphocytes (hotspots) and quantify the lymphocyte density (cells/mm\u00b2) within these selected areas."
+    },
+    {
+      "rank": 8,
+      "feature_name": "TIL Exclusion Pattern Score",
+      "feature_category": "spatial_distance",
+      "feature_type": "predictive",
+      "roi": "invasive_margin",
+      "roi_annotation_guide": "Annotate the invasive margin: the zone 500 \u00b5m inward and outward from the tumor-stroma boundary. The excluded pattern is defined by TILs present in this zone but absent from tumor nests (intratumoral).",
+      "measurement_method": "Calculate the ratio of invasive margin TIL density to intratumoral TIL density. A ratio >5 defines the 'excluded' phenotype. Also compute the mean nearest-neighbor distance from margin TILs to the nearest tumor nest boundary (exclusion gap in \u00b5m). Higher gap = stronger exclusion.",
+      "measurement_unit": "margin:intratumoral TIL ratio; exclusion gap (\u00b5m)",
+      "confidence_score": 66.66666666666666,
+      "predictive_score": 64.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_tils_excluded_pattern"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tils_excluded_pattern",
+          "claim": "The immune-excluded phenotype \u2014 where TILs are trapped at the tumor margin by VEGF-driven stromal barriers \u2014 predicts poor response to checkpoint monotherapy. Anti-VEGF disrupts this exclusion mechanism; the shift from excluded to inflamed phenotype "
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "checkpoint",
+        "raw_score": 70.66666666666666
+      },
+      "hypothesis": "An immune-excluded phenotype, where TILs are trapped at the tumor margin by stromal barriers, indicates a physical impediment to immune cell access to tumor cells and predicts poor response to checkpoint monotherapy. Pembrolizumab's efficacy is limited if T cells cannot effectively engage their targets. To measure, assess the spatial distribution of lymphocytes, specifically identifying cases where lymphocytes are abundant in the peritumoral stroma but largely absent from the tumor nests, and assign a score based on the degree of exclusion."
+    }
+  ],
+  "failed_sources": [],
+  "successful_sources": [
+    "HECatalog",
+    "PubMed",
+    "RankingEngine",
+    "LLM:Gemini/gemini-2.5-flash"
+  ],
+  "total_features_evaluated": 36,
+  "run_metadata": {
+    "elapsed_seconds": 22.38,
+    "total_evidence": 36,
+    "catalog_features": 31,
+    "pubmed_features": 5,
+    "pubmed_ids_found": 5,
+    "moa_class": "checkpoint",
+    "analogical_search": true
+  }
+}

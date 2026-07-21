@@ -1,0 +1,159 @@
+╭─────────────────────────────────────────────────────────────╮
+│ MOA-to-HIF Evidence Prioritization Agent                    │
+│ H&E Human-Interpretable Feature Recommendation · Pan-Cancer │
+╰─────────────────────────────────────────────────────────────╯
+Drug: pembrolizumab
+MOA: PD-1 checkpoint inhibitor
+Scope: Pan-cancer (all solid tumors)
+MOA Class: checkpoint
+Top N: 8
+Backend: auto
+Analogical search: enabled
+
+[07/20/26 21:13:28] INFO     INFO:agents.orchestrator:==========================
+                             ==================================                 
+                    INFO     INFO:agents.orchestrator:DigPath HIF Pipeline      
+                             START: drug=pembrolizumab moa_class=checkpoint     
+                             (pan-cancer)                                       
+                    INFO     INFO:agents.orchestrator:==========================
+                             ==================================                 
+                    INFO     INFO:agents.he_feature_agent:[HEFeatureAgent]      
+                             drug=pembrolizumab | moa_class=checkpoint          
+                             (tumor-type agnostic)                              
+                    INFO     INFO:agents.he_feature_agent:[HEFeatureAgent]      
+                             Retrieved 31 H&E features from catalog             
+                    INFO     INFO:agents.literature_agent:[LiteratureAgent]     
+                             Searching PubMed for 5 HIFs | drug=pembrolizumab   
+                             moa_class=checkpoint (direct + analogical + 0 proxy
+                             drugs: [])                                         
+                    INFO     INFO:agents.literature_agent:[LiteratureAgent]     
+                             Found 5 records (0 direct, 5 analogical) | 5 unique
+                             PMIDs                                              
+                    INFO     INFO:agents.orchestrator:[Orchestrator] Literature:
+                             0 direct, 5 analogical PMIDs                       
+                    INFO     INFO:agents.ranking_agent:[RankingAgent] Scoring 36
+                             evidence items | moa_class=checkpoint              
+                    INFO     INFO:agents.ranking_agent:[RankingAgent] 31 valid  
+                             candidates | top: Stromal TIL Score (score=105.0)  
+                    INFO     INFO:llm.backend:[LLM] Backend: Gemini (auto-routed
+                             — IO/ADC drug class for 'pembrolizumab')           
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent]       
+                             Starting LLM synthesis with Gemini/gemini-2.5-flash
+                             | drug=pembrolizumab moa_class=checkpoint          
+                             (pan-cancer)                                       
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent] Gemini
+                             primary — Ollama queued as auth-error fallback     
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent] Trying
+                             backend: Gemini/gemini-2.5-flash                   
+[07/20/26 21:13:29] INFO     INFO:google_genai.models:AFC is enabled with max   
+                             remote calls: 10.                                  
+[07/20/26 21:13:50] INFO     INFO:httpx:HTTP Request: POST                      
+                             https://generativelanguage.googleapis.com/v1beta/mo
+                             dels/gemini-2.5-flash:generateContent "HTTP/1.1 200
+                             OK"                                                
+                    INFO     INFO:llm.backend:[Gemini/gemini-2.5-flash]         
+                             Response: 4523 chars                               
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent] Parsed
+                             8 LLM items. Pre-ranked: 8.                        
+                    INFO     INFO:agents.synthesis_agent:[SynthesisAgent]       
+                             Gemini/gemini-2.5-flash succeeded: 8 hypotheses    
+                    INFO     INFO:agents.orchestrator:DigPath HIF Pipeline      
+                             COMPLETE in 22.4s | 8 features                     
+
+
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ MOA-to-HIF Evidence Prioritization Agent Results                             │
+│ Drug: pembrolizumab | Scope: Pan-cancer | MOA class: checkpoint | Evidence   │
+│ items: 36 | LLM: Gemini/gemini-2.5-flash                                     │
+╰──────────────────────────────────────────────────────────────────────────────╯
+                     Top 8 H&E Human-Interpretable Features                     
+┏┳━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━┳━━━┳━━┳━━━━━━━┓
+┃┃ Feature                  ┃ ROI        ┃ Category     ┃ Type  ┃ … ┃  ┃ Basis ┃
+┡╇━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━╇━━━╇━━╇━━━━━━━┩
+││ Stromal TIL Score        │ whole_sec… │ til_score    │ both  │ … │  │ dire… │
+││ Immunoscore              │ whole_sec… │ immune_phen… │ prog… │ … │  │ dire… │
+││ Immune Phenotype         │ whole_sec… │ immune_phen… │ pred… │ … │  │ mixed │
+││ Classification           │            │              │       │   │  │       │
+││ Intratumoral TIL Density │ whole_sec… │ til_score    │ both  │ … │  │ dire… │
+││ Invasive Margin TIL      │ whole_sec… │ til_score    │ both  │ … │  │ dire… │
+││ Density                  │            │              │       │   │  │       │
+││ Post-ADC ICD TIL         │ tumor_nest │ til_score    │ pred… │ … │  │ dire… │
+││ Infiltration Pattern     │            │              │       │   │  │       │
+││ TIL Hotspot Density      │ whole_sec… │ spatial_clu… │ both  │ … │  │ dire… │
+││ TIL Exclusion Pattern    │ invasive_… │ spatial_dis… │ pred… │ … │  │ dire… │
+││ Score                    │            │              │       │   │  │       │
+└┴──────────────────────────┴────────────┴──────────────┴───────┴───┴──┴───────┘
+
+Feature Measurement Methods & Rationale:
+
+#1 Stromal TIL Score (both) 
+  ROI: whole_section
+  Measure: Percent of stromal area occupied by mononuclear inflammatory cells 
+(lymphocytes + plasma cells) per TIIC Working Group guidelines
+  Rationale: High stromal TIL score indicates a robust immune presence within 
+the tumor microenvironment, suggesting an active anti-tumor immune response that
+can be further enhanced by PD-1 blockade. This feature is an independent 
+prognostic marker and predicts response to checkpoint inhibitors. To measure, 
+quantify the density of lymphocytes within the tumor stroma, excluding tumor 
+nests, expressed as a percentage of the stromal area or as cells/mm².
+
+#2 Immunoscore (prognostic) 
+  ROI: whole_section
+  Measure: Quantify CD3+ and CD8+ cell densities (or lymphocytes as proxy on 
+H&E) at two tumor regions: tumor core and invasive margin. Classify as 
+Immunoscore 0–4 based on density percentiles.
+  Rationale: A high Immunoscore reflects a strong anti-tumor immune response, 
+characterized by the density and spatial distribution of lymphocytes within the 
+tumor core and invasive margin. This comprehensive immune assessment is 
+associated with improved overall survival and predicts response to 
+immunotherapy. While typically quantified by IHC, an H&E-based estimation 
+involves segmenting the tumor core and invasive margin, detecting all 
+identifiable lymphocytes, and assigning a composite score based on their 
+densities in these two compartments.
+
+#3 Immune Phenotype Classification (predictive) 
+  ROI: whole_section
+  Measure: Classify the TME into: Inflamed (TILs throughout tumor parenchyma), 
+Excluded (TILs at margin/stroma only), or Desert (absent TILs). Based on 
+intratumoral vs stromal TIL distribution.
+  Rationale: The immune phenotype (inflamed, excluded, desert) describes the 
+spatial distribution of immune cells relative to tumor cells, directly 
+influencing the efficacy of PD-1 blockade. An inflamed phenotype, characterized 
+by intratumoral T-cell infiltration, predicts response to PD-1/PD-L1 checkpoint 
+inhibitors. To measure, classify tumors by visually assessing or using image 
+analysis to determine if lymphocytes are primarily within tumor nests 
+(inflamed), at the tumor periphery/stroma (excluded), or largely absent 
+(desert).
+
+#4 Intratumoral TIL Density (both) 
+  ROI: whole_section
+  Measure: Count of lymphocytes infiltrating tumor cell nests per unit area 
+(cells/mm²) or as a percent of tumor nests with infiltrating lymphocytes
+  Rationale: High intratumoral TIL density signifies active immune recognition 
+and infiltration directly within tumor nests, providing a direct target 
+population for PD-1 blockade to enhance anti-tumor activity. This feature 
+predicts benefit from checkpoint inhibition across multiple tumor types. To 
+measure, quantify the number of lymphocytes per unit area within the tumor cell 
+nests, expressed as cells/mm² or as a percentage of the tumor area occupied by 
+lymphocytes.
+
+#5 Invasive Margin TIL Density (both) 
+  ROI: whole_section
+  Measure: Density of lymphocytes at the tumor-stroma interface (within 500 µm 
+of the leading edge), reported as cells/mm²
+  Rationale: A high density of lymphocytes at the invasive margin suggests an 
+active immune response attempting to contain tumor spread, which can be 
+potentiated by PD-1 inhibition to overcome immune evasion mechanisms at this 
+critical interface. This feature is associated with improved survival and 
+checkpoint inhibitor benefit. To measure, quantify the density of lymphocytes 
+within a defined band (e.g., 0.5-1 mm) at the interface between the tumor and 
+the surrounding normal tissue, expressed as cells/mm².
+
+Sources: HECatalog, RankingEngine, PubMed, LLM:Gemini/gemini-2.5-flash
+
+Completed in 22.4s | Log: logs/digpath.log
+Saved: 
+/Users/briansang/Desktop/llm_informatics/digital_pathology/output/results.json
+Saved: 
+/Users/briansang/Desktop/llm_informatics/digital_pathology/output/features_summa
+ry.csv
