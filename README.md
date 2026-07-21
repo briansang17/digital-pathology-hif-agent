@@ -1,48 +1,81 @@
 # Digital Pathology HIF Agent
 
-**In plain terms:** you tell it a cancer drug's name and how it works, and it tells you what to look for under the microscope on a regular biopsy slide to predict whether that drug will help the patient.
+Given a drug name and its mechanism of action (MOA), this tool returns a ranked, evidence-graded list of H&E-derived Human-Interpretable Features (HIFs) likely to be predictive or prognostic for that drug — with ROI annotation guidance, measurement methodology, and evidence provenance for each.
+
+It's built for the situation where you don't yet have trial pathology data: a new or repositioned compound where MOA is the only signal available, and you need a defensible starting hypothesis set for which H&E-derived features to prioritize in a translational/companion-diagnostic workup.
 
 ---
 
 ## Table of contents
 
-- [The idea](#the-idea)
-- [Some background](#some-background)
+- [Why RAG, not just an LLM](#why-rag-not-just-an-llm)
+- [Pipeline](#pipeline)
+- [Scoring](#scoring)
 - [Quickstart](#quickstart)
 - [See it in action](#see-it-in-action)
-- [What you get back](#what-you-get-back)
+- [Output schema](#output-schema)
 - [More examples](#more-examples)
-- [How it's organized](#how-its-organized)
-- [Frequently asked questions](#frequently-asked-questions)
+- [Repo layout](#repo-layout)
+- [Design notes / FAQ](#design-notes--faq)
 - [License](#license)
 
 ---
 
-## The idea
+## Why RAG, not just an LLM
 
-Every tumor biopsy gets stained with a simple, cheap dye combo called **H&E** (it colors cell nuclei purple and everything else pink). Pathologists have found that certain visible patterns on that slide — like how many immune cells surround a tumor, or how dense the tumor cells are — can hint at whether a drug will work.
+Asking Gemini/GPT/Llama "what H&E features predict response to drug X" directly is unreliable for this task, for reasons specific to the domain:
 
-Figuring out *which* patterns matter for a *specific* drug normally means a scientist reading dozens of research papers. This tool automates that process in a few seconds:
+- **Evidence-level conflation.** An LLM will not reliably distinguish Level A evidence (multiple RCTs, e.g. stromal TIL in TNBC/NSCLC) from Level C/D evidence (single retrospective cohort, or mechanistic inference only) unless that grading is fed to it explicitly. Left alone, it tends to present speculative and well-validated features with equal confidence.
+- **Citation fabrication.** LLMs will invent PMIDs or misattribute claims to papers that don't support them — unacceptable when the output is meant to inform a wet-lab or translational workup.
+- **MOA-specific weighting is not general medical knowledge.** Whether TILs matter more than TAM density for a given MOA is a function of curated pathway biology (e.g., hypoxia → M2 macrophage polarization; anti-VEGF → vessel normalization → T-cell extravasation) that isn't reliably reconstructed from model weights on demand, and the weighting needs to be inspectable/auditable, not implicit in a generated paragraph.
+- **Reproducibility.** A ranking that changes between runs (or with prompt phrasing) is not usable as a scientific output. Stakeholders need to be able to ask "why did feature X outrank feature Y" and get a formula-based answer, not a re-generated LLM justification.
 
-1. **Look up known patterns** — it checks a curated list of ~30 known slide patterns (called **HIFs**, or Human-Interpretable Features) and how strong the clinical evidence is for each one.
-2. **Search fresh literature** — it searches PubMed for papers connecting that specific drug to those patterns, in case there's newer evidence than what's in the built-in list.
-3. **Score and rank** — every pattern gets a score using clear, math-based rules. No AI guessing here — this step is 100% reproducible, meaning you'll get the exact same ranking every time you run it.
-4. **Explain (optional)** — an AI model (Google Gemini, or a local Ollama model if you'd rather not use a cloud API) writes a short, plain-English explanation for the top results. The AI is only allowed to use the evidence gathered in steps 1–3, so it can't invent facts or citations.
+The architecture here enforces a hard separation: **retrieval and ranking are deterministic and LLM-free**; the LLM is invoked only at the end, strictly scoped to the evidence already retrieved, to produce the narrative rationale. It cannot alter scores, add unretrieved evidence, or invent citations. If the LLM call fails or returns malformed output, the pipeline falls back silently to the deterministic ranking with no narrative — it never blocks on the generation step.
 
-## Some background
+Retrieval draws from two sources:
 
-**What is a "Human-Interpretable Feature" (HIF)?**
-It's just a measurement a pathologist (or a computer program) can make by looking at a slide and reporting a number. A few examples:
+1. **`tools/he_catalog.py`** — a static, hand-curated catalog of ~30 H&E HIFs, each with `evidence_level` (A–D), `moa_classes`, `tumor_types`, ROI annotation guide, measurement method, and supporting PMIDs. Precision-controlled and works fully offline.
+2. **`tools/pubmed.py`** — live E-utilities queries per (drug, feature, tumor type) triplet, parsed into evidence records with feature type (predictive/prognostic) inferred from abstract text, to surface drug-specific evidence not yet in the catalog.
 
-- *Stromal TIL Score* — what percentage of the tissue around the tumor is filled with immune cells (lymphocytes)?
-- *Tumor Cell Density* — how tightly packed are the cancer cells?
-- *Immune Phenotype* — is the tumor "inflamed" (immune cells everywhere), "excluded" (immune cells stuck at the edges), or a "desert" (no immune cells at all)?
+## Pipeline
 
-**Why start with H&E instead of fancier tests?**
-Because literally every patient biopsy already gets an H&E slide — it's the cheapest, most routine test in pathology. If useful information can be pulled from a slide that's already being made anyway, it's available immediately, for every patient, at no extra cost.
+```
+drug + MOA description
+      │
+      ├─ config.py: classify into MOA bucket (checkpoint / ddr / kinase /
+      │             antiangiogenic / cell_cycle / hypoxia / bispecific / adc / default)
+      │             → category-level feature weights, LLM backend routing
+      │
+      ├─ HEFeatureAgent: filter catalog by MOA class, score = evidence_level_weight × moa_weight
+      │
+      ├─ LiteratureAgent: PubMed search per top feature (+ analogical search via proxy
+      │                   drugs for bispecific/ADC/hypoxia MOAs lacking direct literature)
+      │
+      ├─ RankingAgent: aggregate catalog + PubMed + analogical evidence into a single
+      │                score per feature, apply macrophage-reliability penalty, normalize
+      │                to 0–100, sort. Fully deterministic — no LLM.
+      │
+      └─ SynthesisAgent: send ranked features + their evidence context to Gemini/Ollama
+                          with a closed-context prompt ("use ONLY the evidence given").
+                          Pydantic-validated; retries once on malformed JSON; falls back
+                          to deterministic ranking with no narrative on failure.
+```
 
-**Why does the drug's "mechanism of action" (MOA) matter?**
-Different drugs work in different ways, so different slide patterns matter more or less. A drug that boosts the immune system (like a checkpoint inhibitor) cares a lot about immune cell patterns. A drug that blocks tumor blood vessel growth cares more about vascular patterns. This tool takes what you tell it about how the drug works and uses that to weigh which patterns are most relevant.
+Four agents (`agents/`), one orchestrator (`agents/orchestrator.py`) that runs them in sequence with per-step error isolation — a failure in the literature search or LLM step degrades gracefully rather than aborting the run.
+
+## Scoring
+
+```
+total_score = (evidence_level_weight × moa_weight)
+            + (pubmed_hits × 0.15 × moa_weight)
+            + analogical_evidence_contribution
+            × macrophage_reliability_penalty (0.25× if macrophage-primary)
+```
+
+- `evidence_level_weight`: A=5, B=3, C=2, D=1.5 (`config.EVIDENCE_LEVEL_WEIGHTS`)
+- `moa_weight`: per-category multiplier from `config.MOA_FEATURE_WEIGHTS`, keyed by MOA class (e.g. `checkpoint` weights TIL/TLS/immune-phenotype categories 4–5×; `hypoxia` weights vascular/necrosis categories similarly)
+- Macrophage penalty exists because TAMs are unreliable to call from H&E morphology alone (large pale nuclei overlap with plasma cells/dendritic cells on H&E; CD68/CD163 IHC is needed for confident identification) — the 0.25× penalty keeps TAM-based features from outranking more H&E-reliable lymphocyte/stromal features regardless of raw evidence strength.
+- Analogical evidence: when no direct literature exists for a MOA (e.g. a first-in-class bispecific), the literature agent searches proxy drugs from a related, better-characterized MOA class (`agents/literature_agent.py: COMPONENT_PROXY_DRUGS`) and evidence is tagged `"evidence_basis": "analogical"` in the output so it's never conflated with direct evidence.
 
 ## Quickstart
 
@@ -51,103 +84,76 @@ cd digital_pathology
 pip install -r requirements.txt
 
 cp .env.example .env
-# Add a GEMINI_API_KEY to get AI-written explanations, or skip this and use --no-llm
+# GEMINI_API_KEY for narrative synthesis, or omit and use --no-llm for ranking-only
 
 python main.py --drug "pembrolizumab" --moa "PD-1 checkpoint inhibitor"
 ```
 
-You'll see a ranked table print to your terminal, and it also gets saved to
-`output/results.json` and `output/features_summary.csv`.
-
-**Requirements:** Python 3.10+. Everything else is optional:
-
-- No AI backend? Add `--no-llm` and you'll still get the full ranked list — just without
-  the plain-English explanations.
-- Want AI explanations? Either get a free [Gemini API key](https://aistudio.google.com/apikey)
-  and put it in `.env`, or run a local model with [Ollama](https://ollama.com/) — no API key
-  or internet connection needed.
+Requires Python 3.10+. `--no-llm` runs the full retrieval + ranking pipeline with zero external dependencies (no API key, no internet needed beyond PubMed if you want live literature — the catalog alone is sufficient to get a ranking).
 
 ## See it in action
 
-Don't want to install or run anything? [`examples/sample_run_belzutifan/`](examples/sample_run_belzutifan/)
-has a real, complete run for the drug **belzutifan** — the exact command used, a plain-text
-version of what prints to the terminal, and the full output files it produced. It's a good
-way to see what the tool actually gives you before deciding whether to run it yourself.
+[`examples/sample_run_belzutifan/`](examples/sample_run_belzutifan/) — a complete, unedited run for **belzutifan** (HIF-2alpha inhibitor, VHL-mutant tumors): command, reconstructed terminal output, and full `results.json`/`features_summary.csv`. Useful for inspecting the evidence provenance (`evidence_basis: direct` vs `analogical`), the ranking rationale breakdown per feature, and what the LLM narrative looks like when constrained to retrieved evidence only.
 
-## What you get back
+## Output schema
 
-Every run produces three things:
+Each ranked `HIFHypothesis` (see `models/schemas.py`) includes:
 
-| Output | What it's for |
+| Field | Content |
 |---|---|
-| Terminal table | Quick glance — ranked features, confidence score, evidence level (A–D) |
-| `output/results.json` | The full detail — every feature's measurement method, exact region of the slide to look at, supporting evidence, and AI-written rationale |
-| `output/features_summary.csv` | The same ranking in a spreadsheet-friendly format you can open in Excel or pull into other tools |
+| `roi` / `roi_annotation_guide` | Which region to annotate (stroma, tumor nest, invasive margin, TLS, etc.) and how |
+| `measurement_method` | Exact quantification procedure (e.g., "count lymphocytes within stromal ROI, normalize by area") |
+| `evidence_level` (A–D) + `evidence_basis` (`direct`/`analogical`) | Strength and provenance of supporting evidence |
+| `feature_type` | `predictive`, `prognostic`, or `both` |
+| `confidence_score`, `predictive_score`, `prognostic_score` | Normalized 0–100 scores |
+| `ranking_rationale` | Full breakdown: catalog inclusion, evidence level, PubMed hit count, analogical hit count, MOA weight applied, raw score — everything needed to audit the ranking without re-running anything |
+| `hypothesis` | LLM-generated rationale grounded strictly in `supporting_evidence` (omitted/placeholder if `--no-llm` or LLM failure) |
 
-Each ranked feature tells you three practical things: **where** on the slide to look
-(e.g., "the connective tissue around the tumor"), **how** to measure it (e.g., "count
-immune cells per square millimeter"), and **why** it matters for this specific drug.
+Written to `output/results.json` (full detail) and `output/features_summary.csv` (flattened, spreadsheet-friendly).
 
 ## More examples
 
 ```bash
-# Skip the AI explanation, just get the ranked list (works with no API key at all)
+# Deterministic ranking only, no API key needed
 python main.py --drug "olaparib" --moa "PARP1/2 inhibitor" --no-llm
 
-# A brand-new/experimental drug still works — it falls back to general best-evidence patterns
+# Novel/unclassified MOA falls back to default pan-cancer weighting rather than failing
 python main.py --drug "my-drug-001" --moa "TIGIT immune checkpoint inhibitor"
 
-# Only show the top 5 features instead of the default
+# Truncate to top 5
 python main.py --drug "sotorasib" --moa "Covalent KRAS G12C inhibitor" --top-n 5
 
-# Force a specific AI backend instead of auto-selecting one
+# Override auto MOA-based backend routing
 python main.py --drug "bevacizumab" --moa "Anti-VEGF antibody" --backend gemini
 ```
 
-## How it's organized
+## Repo layout
 
 ```
 digital_pathology/
-├── main.py            Run this — the command-line tool
-├── config.py          Maps drug mechanisms to which slide patterns matter most
-├── requirements.txt   Python dependencies
-├── .env.example       Template for your API keys / settings
-│
-├── agents/            The 4 steps of the pipeline (lookup, search, rank, explain)
-├── tools/             The pattern catalog, PubMed search, and local caching
-├── models/            Data structures used to pass information between steps
-├── llm/               AI model connections (Gemini / Ollama)
-│
-├── examples/          A real sample run you can look at without installing anything
-├── output/            Where your own results get saved (results.json, .csv)
-└── docs/              Deeper technical documentation
+├── main.py            CLI entry point, Rich table rendering, JSON/CSV export
+├── config.py          MOA classification, evidence/category weights, LLM routing rules
+├── agents/            he_feature_agent, literature_agent, ranking_agent, synthesis_agent, orchestrator
+├── tools/
+│   ├── he_catalog.py  Curated HIF catalog (~30 entries, evidence-graded)
+│   ├── pubmed.py       Async NCBI E-utilities client, analogical/proxy-drug search
+│   └── cache.py        SQLite-backed diskcache (7-day TTL) for API calls
+├── models/schemas.py  Pydantic models: NormalizedPathologyFeature, CandidateHIF, HIFHypothesis, PathologyOutput
+├── llm/backend.py     Gemini + Ollama backends, MOA-based auto-routing, grounded prompts
+├── examples/          Sample run with full input/output for inspection without execution
+├── output/            Your run outputs land here
+└── docs/ARCHITECTURE.md   Agent-by-agent internals, full scoring derivation, design rationale
 ```
 
-For a full technical breakdown — how each pipeline step actually works internally, the
-exact scoring formulas, and the reasoning behind specific design choices — see
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+## Design notes / FAQ
 
-## Frequently asked questions
+**Why is ranking fully separated from generation?** So the ranking is auditable and reproducible independent of LLM behavior/availability — a requirement for anything meant to inform a real translational decision, not just a demo.
 
-**Does this replace a pathologist?**
-No. It's a research tool that suggests *what to measure* — the actual measuring and
-clinical interpretation still needs a trained pathologist or a validated image-analysis
-pipeline.
+**What's the fallback behavior if the LLM call fails?** Silent degrade to deterministic ranking with a placeholder hypothesis string; the pipeline's `successful_sources`/`failed_sources` fields in `results.json` record exactly what happened, so failures are visible in output even when the run doesn't error.
 
-**Where does the evidence come from?**
-Two places: a hand-curated catalog of known H&E findings with published support, and a
-live PubMed search for that specific drug. The AI step only writes narrative text — it
-never decides the ranking and never adds outside facts.
+**How does an unclassified/novel MOA get handled?** Falls back to `config.py`'s `default` bucket — balanced weighting across all feature categories rather than refusing to run, on the assumption that a broad, well-evidenced pan-cancer feature set is more useful than nothing when MOA-specific data doesn't exist yet.
 
-**What happens if I ask about a completely new/experimental drug?**
-The tool falls back to a general, broadly-applicable set of well-evidenced patterns
-rather than failing. It also still tries a PubMed search in case something relevant has
-already been published.
-
-**Do I need the internet?**
-Only for PubMed searches and if you use the Gemini backend. Run with `--no-llm` and a
-local catalog-only mode works fully offline; using Ollama also avoids sending anything
-to the cloud.
+**Where's the deeper technical writeup?** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — full agent internals, the six-way MOA routing table with example drugs, the ROI-type catalog structure, and worked-through interview-style Q&A on design decisions.
 
 ## License
 
