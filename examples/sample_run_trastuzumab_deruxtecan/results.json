@@ -1,0 +1,384 @@
+{
+  "drug_name": "trastuzumab deruxtecan",
+  "moa_description": "HER2-targeted antibody-drug conjugate with topoisomerase I inhibitor payload (deruxtecan)",
+  "tumor_type": "pan-cancer",
+  "moa_class": "adc",
+  "llm_backend_used": "none",
+  "hypotheses": [
+    {
+      "rank": 1,
+      "feature_name": "Tumor Cell Density",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Count of tumor cells per unit area (cells/mm\u00b2) within the annotated tumor region",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 100.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_tumor_cell_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tumor_cell_density",
+          "claim": "High tumor cell density is associated with aggressive tumor biology and poor prognosis; useful as a denominator for immune infiltrate ratios and to normalize TIL density measurements."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "adc",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 2,
+      "feature_name": "Stromal Ratio",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Fraction of the tumor region occupied by stromal tissue (stroma + endothelial cells) versus tumor cells, expressed as a percentage",
+      "measurement_unit": "%",
+      "confidence_score": 100.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_stromal_ratio"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_stromal_ratio",
+          "claim": "High tumor-associated stroma ratio (>50%) is an independent poor prognostic factor across multiple solid tumors and associated with EMT and reduced immune infiltration."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "adc",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 3,
+      "feature_name": "Tumor-Associated Macrophage Density",
+      "feature_category": "cell_density",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Count of macrophage-like cells (large round nuclei with pale cytoplasm) per mm\u00b2 in intratumoral and peritumoral compartments separately",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 100.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_macrophage_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_macrophage_density",
+          "claim": "High TAM density is associated with poor prognosis in most solid tumors due to M2 polarization promoting immunosuppression; intratumoral TAM-to-lymphocyte ratio predicts checkpoint inhibitor resistance."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "adc",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 4,
+      "feature_name": "Tumor Necrosis Fraction",
+      "feature_category": "cell_density",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Annotate all areas of coagulative necrosis within the tumor mass (pale, eosinophilic regions with ghost cells and no live nuclei); exclude treatment-related necrosis if known.",
+      "measurement_method": "Segment the whole tumor area on H&E. Identify necrotic regions as areas with loss of nuclear staining and ghost cell outlines. Report necrosis fraction = necrotic area / total tumor area (0\u20131).",
+      "measurement_unit": "fraction (0\u20131)",
+      "confidence_score": 100.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_necrosis_fraction"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_necrosis_fraction",
+          "claim": "High tumor necrosis fraction reflects intratumoral hypoxia and predicts poor prognosis; in anti-VEGF settings it serves as a baseline hypoxia indicator and is reduced by successful vascular normalization. Relevant for HIF-2\u03b1 and VEGF-targeted therapi"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "adc",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 5,
+      "feature_name": "Stromal Vascular Density",
+      "feature_category": "cell_density",
+      "feature_type": "both",
+      "roi": "stroma",
+      "roi_annotation_guide": "Annotate the tumor-associated stroma (peritumoral connective tissue). Focus on areas adjacent to viable tumor nests; exclude areas of necrosis, normal tissue, and large vessels (>100 \u00b5m diameter).",
+      "measurement_method": "In the annotated stroma, count vessel profiles (cross-sections showing open lumens with endothelial lining and/or red blood cells). Normalize by total stromal area. Optionally score vessel tortuosity (1\u20133 scale) from straight/normalized (1) to highly tortuous/glomeruloid (3). Report as vessels/mm\u00b2 and mean tortuosity score.",
+      "measurement_unit": "vessels/mm\u00b2; tortuosity score (1\u20133)",
+      "confidence_score": 100.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_stromal_vessel_density"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_stromal_vessel_density",
+          "claim": "High stromal vascular density with tortuous vessel morphology indicates active tumor angiogenesis and predicts response to anti-VEGF therapy. Vessel normalization (reduced density, reduced tortuosity) after anti-VEGF treatment correlates with improve"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "adc",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 6,
+      "feature_name": "Mitotic Index",
+      "feature_category": "cell_density",
+      "feature_type": "predictive",
+      "roi": "tumor_nest",
+      "roi_annotation_guide": "Annotate all viable tumor cell nests. Focus scoring on the most mitotically active 'hotspot' areas \u2014 select 10 high-power fields (HPF) at 400\u00d7 in regions of highest proliferative activity within tumor nests.",
+      "measurement_method": "Count mitotic figures (cells in any phase of mitosis: prophase, metaphase, anaphase, telophase) in 10 consecutive HPF (0.2 mm\u00b2 each) within tumor nests. Exclude necrosis and stroma. Report as mitotic figures per 10 HPF (MF/10HPF) or per mm\u00b2. In QuPath, train a classifier on mitotic figure morphology (condensed/fragmented basophilic chromatin) and apply to annotated tumor ROI.",
+      "measurement_unit": "mitotic figures per 10 HPF or per mm\u00b2",
+      "confidence_score": 100.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_mitotic_index"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_mitotic_index",
+          "claim": "High mitotic index reflects rapid cell proliferation and predicts sensitivity to topoisomerase and tubulin-targeting ADC payloads. For TROP2-ADCs (sacituzumab govitecan, SN-38 payload), tumors with high mitotic rates show greater vulnerability to rep"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "adc",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 7,
+      "feature_name": "Nuclear Pleomorphism Score",
+      "feature_category": "cell_density",
+      "feature_type": "predictive",
+      "roi": "tumor_nest",
+      "roi_annotation_guide": "Score nuclear pleomorphism in the area with the most atypical nuclei within tumor nests. Select 5 HPF at 400\u00d7 in the most pleomorphic region.",
+      "measurement_method": "Score nuclear pleomorphism on the standard Nottingham/Elston-Ellis scale: 1 = nuclei small, uniform (\u22641.5\u00d7 normal lymphocyte); 2 = moderate variation in size/shape; 3 = marked variation, bizarre nuclei, prominent nucleoli. In QuPath, compute nuclear area coefficient of variation (CV), nuclear elongation, and mean nuclear area as objective correlates. Nuclear area CV >0.35 corresponds to grade 3 pleomorphism.",
+      "measurement_unit": "grade 1\u20133 (Nottingham); nuclear area CV",
+      "confidence_score": 100.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_nuclear_pleomorphism"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_nuclear_pleomorphism",
+          "claim": "High nuclear pleomorphism (grade 3) reflects genomic instability, elevated replication stress, and high proliferative index \u2014 all of which increase vulnerability to DNA-damaging ADC payloads. In TNBC, high-grade nuclear pleomorphism correlates with T"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "adc",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 8,
+      "feature_name": "Stromal TIL Score",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Percent of stromal area occupied by mononuclear inflammatory cells (lymphocytes + plasma cells) per TIIC Working Group guidelines",
+      "measurement_unit": "%",
+      "confidence_score": 96.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_stromal_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_stromal_til",
+          "claim": "High stromal TIL score is an independent prognostic marker associated with improved OS in TNBC and NSCLC, and predicts response to checkpoint inhibitors and anthracycline-based chemotherapy."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "adc",
+        "raw_score": 100.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 9,
+      "feature_name": "Tumor-Stroma Ratio (TSR)",
+      "feature_category": "composite",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Assess the hotspot area with the highest stromal proportion relative to tumor cells; select a representative 1\u20132 mm\u00b2 field in the invasive front or core with highest stroma-to-tumor ratio.",
+      "measurement_method": "In QuPath or manually on H&E, estimate the proportion of stroma (fibrous connective tissue + non-immune cells) vs viable tumor cells in a representative field. TSR = stroma area / (stroma + tumor area). Classify as stroma-low (<50%) vs stroma-high (\u226550%).",
+      "measurement_unit": "ratio (0\u20131) or categorical",
+      "confidence_score": 96.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_tumor_stroma_ratio"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tumor_stroma_ratio",
+          "claim": "High tumor-stroma ratio (stroma-rich) is a pan-cancer independent negative prognostic factor. In anti-angiogenic settings, VEGF drives desmoplastic stroma; stroma-high tumors are associated with immune exclusion and poor response to combination IO/an"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "adc",
+        "raw_score": 100.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 10,
+      "feature_name": "Immunoscore",
+      "feature_category": "immune_phenotype",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Quantify CD3+ and CD8+ cell densities (or lymphocytes as proxy on H&E) at two tumor regions: tumor core and invasive margin. Classify as Immunoscore 0\u20134 based on density percentiles.",
+      "measurement_unit": "score 0\u20134",
+      "confidence_score": 84.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 87.5,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "General H&E prognostic/predictive feature",
+      "supporting_sources": [
+        "he_immunoscore"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_immunoscore",
+          "claim": "Immunoscore is a validated pan-cancer prognostic biomarker; high Immunoscore (3\u20134) is associated with improved OS independent of TNM stage and predicts response to adjuvant immunotherapy in Stage III CRC."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 3.5,
+        "moa_class": "adc",
+        "raw_score": 87.5
+      },
+      "hypothesis": ""
+    }
+  ],
+  "failed_sources": [],
+  "successful_sources": [
+    "HECatalog",
+    "RankingEngine"
+  ],
+  "total_features_evaluated": 31,
+  "run_metadata": {
+    "elapsed_seconds": 1.09,
+    "total_evidence": 31,
+    "catalog_features": 31,
+    "pubmed_features": 0,
+    "pubmed_ids_found": 0,
+    "moa_class": "adc",
+    "analogical_search": true
+  }
+}

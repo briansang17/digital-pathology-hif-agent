@@ -96,7 +96,15 @@ Requires Python 3.10+. `--no-llm` runs the full retrieval + ranking pipeline wit
 
 ## See it in action
 
-[`examples/sample_run_belzutifan/`](examples/sample_run_belzutifan/) — a complete, unedited run for **belzutifan** (HIF-2alpha inhibitor, VHL-mutant tumors): command, reconstructed terminal output, and full `results.json`/`features_summary.csv`. Useful for inspecting the evidence provenance (`evidence_basis: direct` vs `analogical`), the ranking rationale breakdown per feature, and what the LLM narrative looks like when constrained to retrieved evidence only.
+[`examples/`](examples/) contains three deterministic (`--no-llm`), byte-reproducible sample runs, each showing the same 31-feature catalog producing a completely different ranking depending on MOA class:
+
+| Drug | MOA class | Top feature |
+|---|---|---|
+| [pembrolizumab](examples/sample_run_pembrolizumab/) (Keytruda) | `checkpoint` | Stromal TIL Score |
+| [belzutifan](examples/sample_run_belzutifan/) (Welireg) | `hypoxia` | Tumor-Stroma Ratio (TSR) |
+| [trastuzumab deruxtecan](examples/sample_run_trastuzumab_deruxtecan/) (Enhertu, ADC) | `adc` | Tumor Cell Density |
+
+Each folder has the exact command, reconstructed terminal output, and full `results.json`/`features_summary.csv` — useful for inspecting evidence provenance (`evidence_basis: direct` vs `analogical`) and the per-feature ranking rationale breakdown. See [`examples/README.md`](examples/README.md) for the full comparison.
 
 ## Output schema
 

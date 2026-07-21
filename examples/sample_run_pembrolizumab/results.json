@@ -1,0 +1,384 @@
+{
+  "drug_name": "pembrolizumab",
+  "moa_description": "PD-1 checkpoint inhibitor",
+  "tumor_type": "pan-cancer",
+  "moa_class": "checkpoint",
+  "llm_backend_used": "none",
+  "hypotheses": [
+    {
+      "rank": 1,
+      "feature_name": "Stromal TIL Score",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Percent of stromal area occupied by mononuclear inflammatory cells (lymphocytes + plasma cells) per TIIC Working Group guidelines",
+      "measurement_unit": "%",
+      "confidence_score": 100.0,
+      "predictive_score": 100.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_stromal_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_stromal_til",
+          "claim": "High stromal TIL score is an independent prognostic marker associated with improved OS in TNBC and NSCLC, and predicts response to checkpoint inhibitors and anthracycline-based chemotherapy."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 2,
+      "feature_name": "Immunoscore",
+      "feature_category": "immune_phenotype",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Quantify CD3+ and CD8+ cell densities (or lymphocytes as proxy on H&E) at two tumor regions: tumor core and invasive margin. Classify as Immunoscore 0\u20134 based on density percentiles.",
+      "measurement_unit": "score 0\u20134",
+      "confidence_score": 100.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 100.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_immunoscore"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_immunoscore",
+          "claim": "Immunoscore is a validated pan-cancer prognostic biomarker; high Immunoscore (3\u20134) is associated with improved OS independent of TNM stage and predicts response to adjuvant immunotherapy in Stage III CRC."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 105.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 3,
+      "feature_name": "Intratumoral TIL Density",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Count of lymphocytes infiltrating tumor cell nests per unit area (cells/mm\u00b2) or as a percent of tumor nests with infiltrating lymphocytes",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 83.33333333333334,
+      "predictive_score": 80.0,
+      "prognostic_score": 80.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_intratumoral_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_intratumoral_til",
+          "claim": "Intratumoral TIL density correlates with pathologic complete response to neoadjuvant therapy in TNBC and predicts benefit from checkpoint inhibition in multiple tumor types."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 88.33333333333334
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 4,
+      "feature_name": "Invasive Margin TIL Density",
+      "feature_category": "til_score",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Density of lymphocytes at the tumor-stroma interface (within 500 \u00b5m of the leading edge), reported as cells/mm\u00b2",
+      "measurement_unit": "cells/mm\u00b2",
+      "confidence_score": 83.33333333333334,
+      "predictive_score": 80.0,
+      "prognostic_score": 80.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_invasive_margin_til"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_invasive_margin_til",
+          "claim": "High TIL density at the invasive margin is a component of the Immunoscore and associated with improved survival and checkpoint inhibitor benefit in CRC."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 88.33333333333334
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 5,
+      "feature_name": "Immune Phenotype Classification",
+      "feature_category": "immune_phenotype",
+      "feature_type": "predictive",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Classify the TME into: Inflamed (TILs throughout tumor parenchyma), Excluded (TILs at margin/stroma only), or Desert (absent TILs). Based on intratumoral vs stromal TIL distribution.",
+      "measurement_unit": "class (inflamed/excluded/desert)",
+      "confidence_score": 83.33333333333334,
+      "predictive_score": 80.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_immune_phenotype"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_immune_phenotype",
+          "claim": "Inflamed phenotype predicts response to PD-1/PD-L1 checkpoint inhibitors; excluded phenotype identifies patients who may benefit from stromal targeting combinations; desert phenotype has poor IO response across tumor types."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 88.33333333333334
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 6,
+      "feature_name": "Post-ADC ICD TIL Infiltration Pattern",
+      "feature_category": "til_score",
+      "feature_type": "predictive",
+      "roi": "tumor_nest",
+      "roi_annotation_guide": "Annotate areas within tumor nests showing lymphocyte infiltration adjacent to or within necrotic/apoptotic tumor cell clusters. Focus on intraepithelial compartments \u2014 TILs within tumor nests, not just peritumoral stroma.",
+      "measurement_method": "Quantify intratumoral TILs (within tumor cell nests, not stroma) using TIIC Working Group guidelines adapted for intraepithelial localization. Compute intraepithelial TIL% = lymphocytes within tumor nests / total cells within nests \u00d7 100. Also calculate apoptotic index (cells with condensed/fragmented nuclei and cytoplasmic shrinkage) as a proxy for payload-driven immunogenic cell death.",
+      "measurement_unit": "intraepithelial TIL% ; apoptotic index",
+      "confidence_score": 83.33333333333334,
+      "predictive_score": 80.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_icd_til_infiltrate"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_icd_til_infiltrate",
+          "claim": "ADC payloads (especially topoisomerase I inhibitors like SN-38 and DXd) cause immunogenic cell death (ICD), releasing DAMPs that drive de novo T cell infiltration into tumor nests. Baseline intraepithelial TIL infiltration is a predictive biomarker f"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 5.0,
+        "moa_class": "checkpoint",
+        "raw_score": 88.33333333333334
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 7,
+      "feature_name": "TIL Hotspot Density",
+      "feature_category": "spatial_clustering",
+      "feature_type": "both",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Maximum TIL density in a 500\u00d7500 \u00b5m sliding window across the tumor, identifying hotspot regions of immune aggregation",
+      "measurement_unit": "cells/mm\u00b2 (hotspot)",
+      "confidence_score": 66.66666666666666,
+      "predictive_score": 64.0,
+      "prognostic_score": 64.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_tls_hotspot"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tls_hotspot",
+          "claim": "TIL hotspot density (best tumor area) outperforms mean TIL score for predicting pCR to neoadjuvant chemotherapy in TNBC and benefit from checkpoint inhibition in NSCLC."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "checkpoint",
+        "raw_score": 70.66666666666666
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 8,
+      "feature_name": "TIL Exclusion Pattern Score",
+      "feature_category": "spatial_distance",
+      "feature_type": "predictive",
+      "roi": "invasive_margin",
+      "roi_annotation_guide": "Annotate the invasive margin: the zone 500 \u00b5m inward and outward from the tumor-stroma boundary. The excluded pattern is defined by TILs present in this zone but absent from tumor nests (intratumoral).",
+      "measurement_method": "Calculate the ratio of invasive margin TIL density to intratumoral TIL density. A ratio >5 defines the 'excluded' phenotype. Also compute the mean nearest-neighbor distance from margin TILs to the nearest tumor nest boundary (exclusion gap in \u00b5m). Higher gap = stronger exclusion.",
+      "measurement_unit": "margin:intratumoral TIL ratio; exclusion gap (\u00b5m)",
+      "confidence_score": 66.66666666666666,
+      "predictive_score": 64.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "B",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_tils_excluded_pattern"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tils_excluded_pattern",
+          "claim": "The immune-excluded phenotype \u2014 where TILs are trapped at the tumor margin by VEGF-driven stromal barriers \u2014 predicts poor response to checkpoint monotherapy. Anti-VEGF disrupts this exclusion mechanism; the shift from excluded to inflamed phenotype "
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "B",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "checkpoint",
+        "raw_score": 70.66666666666666
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 9,
+      "feature_name": "Tumor-Stroma Ratio (TSR)",
+      "feature_category": "composite",
+      "feature_type": "prognostic",
+      "roi": "whole_section",
+      "roi_annotation_guide": "Assess the hotspot area with the highest stromal proportion relative to tumor cells; select a representative 1\u20132 mm\u00b2 field in the invasive front or core with highest stroma-to-tumor ratio.",
+      "measurement_method": "In QuPath or manually on H&E, estimate the proportion of stroma (fibrous connective tissue + non-immune cells) vs viable tumor cells in a representative field. TSR = stroma area / (stroma + tumor area). Classify as stroma-low (<50%) vs stroma-high (\u226550%).",
+      "measurement_unit": "ratio (0\u20131) or categorical",
+      "confidence_score": 60.0,
+      "predictive_score": 0.0,
+      "prognostic_score": 60.0,
+      "evidence_level": "A",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_tumor_stroma_ratio"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_tumor_stroma_ratio",
+          "claim": "High tumor-stroma ratio (stroma-rich) is a pan-cancer independent negative prognostic factor. In anti-angiogenic settings, VEGF drives desmoplastic stroma; stroma-high tumors are associated with immune exclusion and poor response to combination IO/an"
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "A",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 3.0,
+        "moa_class": "checkpoint",
+        "raw_score": 63.0
+      },
+      "hypothesis": ""
+    },
+    {
+      "rank": 10,
+      "feature_name": "Lymphocyte-to-Tumor Nearest Neighbor Distance",
+      "feature_category": "spatial_distance",
+      "feature_type": "predictive",
+      "roi": "whole_section",
+      "roi_annotation_guide": "",
+      "measurement_method": "Median distance (\u00b5m) from each lymphocyte centroid to the nearest tumor cell centroid, computed via k-d tree nearest neighbor search",
+      "measurement_unit": "\u00b5m",
+      "confidence_score": 53.333333333333336,
+      "predictive_score": 48.0,
+      "prognostic_score": 0.0,
+      "evidence_level": "C",
+      "evidence_basis": "direct",
+      "drug_relevance": "Checkpoint inhibitor TME biomarker",
+      "supporting_sources": [
+        "he_lymph_tumor_nnd"
+      ],
+      "supporting_evidence": [
+        {
+          "source": "HECatalog",
+          "id": "he_lymph_tumor_nnd",
+          "claim": "Short median lymphocyte-to-tumor distance (high proximity) reflects physical immune engagement and is associated with pathologic response to neoadjuvant immunotherapy."
+        }
+      ],
+      "ranking_rationale": {
+        "in_he_catalog": true,
+        "evidence_level": "C",
+        "pubmed_hits": 0,
+        "analogical_hits": 0,
+        "moa_weight_applied": 4.0,
+        "moa_class": "checkpoint",
+        "raw_score": 57.333333333333336
+      },
+      "hypothesis": ""
+    }
+  ],
+  "failed_sources": [],
+  "successful_sources": [
+    "HECatalog",
+    "RankingEngine"
+  ],
+  "total_features_evaluated": 31,
+  "run_metadata": {
+    "elapsed_seconds": 0.04,
+    "total_evidence": 31,
+    "catalog_features": 31,
+    "pubmed_features": 0,
+    "pubmed_ids_found": 0,
+    "moa_class": "checkpoint",
+    "analogical_search": true
+  }
+}

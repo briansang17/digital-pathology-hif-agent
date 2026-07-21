@@ -1,0 +1,31 @@
+Output from the deterministic `--no-llm` command in command.txt.
+
+Drug: trastuzumab deruxtecan
+MOA: HER2-targeted antibody-drug conjugate with topoisomerase I inhibitor payload (deruxtecan)
+Scope: pan-cancer
+MOA class: adc
+LLM backend: none
+
+ #  Feature                                ROI              Category       Type         Confidence  Evidence
+ 1  Tumor Cell Density                     whole_section    cell_density   prognostic    93.8       B
+ 2  Stromal Ratio                          whole_section    cell_density   prognostic    93.8       B
+ 3  Tumor-Associated Macrophage Density    whole_section    cell_density   both          93.8       B
+ 4  Tumor Necrosis Fraction                whole_section    cell_density   prognostic    93.8       B
+ 5  Stromal Vascular Density               stroma           cell_density   both          93.8       B
+ 6  Mitotic Index                          tumor_nest       cell_density   predictive    93.8       B
+ 7  Nuclear Pleomorphism Score             tumor_nest       cell_density   predictive    93.8       B
+ 8  Stromal TIL Score                      whole_section    til_score      both         100.0       A
+ 9  Tumor-Stroma Ratio (TSR)               whole_section    composite      prognostic   100.0       A
+10  Immunoscore                            whole_section    immune_phenotype prognostic 100.0       A
+
+Run summary: 31 catalog features evaluated, 0 PubMed records returned, no LLM synthesis.
+Sources: HECatalog, RankingEngine.
+
+Notice the ranking shifts toward proliferation/density features (Mitotic Index,
+Nuclear Pleomorphism Score) rather than immune features — because the "adc" MOA
+class weights features that reflect vulnerability to a DNA-damaging cytotoxic
+payload (deruxtecan, a topoisomerase I inhibitor), not immune checkpoint biology.
+
+Outputs written to:
+  - examples/sample_run_trastuzumab_deruxtecan/results.json
+  - examples/sample_run_trastuzumab_deruxtecan/features_summary.csv

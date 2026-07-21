@@ -1,0 +1,30 @@
+Output from the deterministic `--no-llm` command in command.txt.
+
+Drug: pembrolizumab
+MOA: PD-1 checkpoint inhibitor
+Scope: pan-cancer
+MOA class: checkpoint
+LLM backend: none
+
+ #  Feature                                         ROI              Category         Type         Confidence  Evidence
+ 1  Stromal TIL Score                                whole_section    til_score        both         100.0       A
+ 2  Immunoscore                                      whole_section    immune_phenotype prognostic   100.0       A
+ 3  Intratumoral TIL Density                         whole_section    til_score        both          93.8       B
+ 4  Invasive Margin TIL Density                      whole_section    til_score        both          93.8       B
+ 5  Immune Phenotype Classification                  whole_section    immune_phenotype predictive    93.8       B
+ 6  Post-ADC ICD TIL Infiltration Pattern            tumor_nest       til_score        predictive    93.8       B
+ 7  TIL Hotspot Density                              whole_section    spatial_clustering both        93.8       B
+ 8  TIL Exclusion Pattern Score                      invasive_margin  spatial_distance predictive    93.8       B
+ 9  Tumor-Stroma Ratio (TSR)                         whole_section    composite        prognostic   100.0       A
+10  Lymphocyte-to-Tumor Nearest Neighbor Distance    whole_section    spatial_distance predictive     83.3       C
+
+Run summary: 31 catalog features evaluated, 0 PubMed records returned, no LLM synthesis.
+Sources: HECatalog, RankingEngine.
+
+Every top-ranked feature except the tumor-stroma ratio is TIL/immune-related —
+exactly what's expected for a drug whose entire mechanism is releasing the brakes
+on T-cell activity (PD-1 blockade).
+
+Outputs written to:
+  - examples/sample_run_pembrolizumab/results.json
+  - examples/sample_run_pembrolizumab/features_summary.csv
